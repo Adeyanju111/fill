@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar System Data Collection</title>
+<style>
+  :root{
+    --ink:#16202b;
+    --muted:#64748b;
+    --brand:#0c4a6e;
+    --accent:#0e7490;
+    --brand-light:#eef6fb;
+    --line:#e2e8f0;
+    --soft:#f8fafc;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#fff;
+    color:var(--ink);
+    line-height:1.5;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- Header ---------- */
+  .app-header{
+    background:linear-gradient(135deg,#0c4a6e,#0e7490);
+    color:#fff;
+    padding:22px 0;
+  }
+  .header-inner{display:flex;align-items:center;gap:14px;}
+  .brand-mark{
+    width:46px;height:46px;border-radius:12px;
+    background:rgba(255,255,255,.16);
+    display:grid;place-items:center;font-size:22px;flex:none;
+  }
+  .app-header h1{margin:0;font-size:20px;letter-spacing:.2px;}
+  .app-header p{margin:2px 0 0;font-size:13px;opacity:.85;}
+
+  main.wrap{padding-top:28px;padding-bottom:80px;}
+
+  /* ---------- Titles ---------- */
+  .step-title{margin:0 0 6px;font-size:16px;color:var(--brand);}
+  .muted{color:var(--muted);font-size:14px;margin:0 0 14px;}
+
+  /* ---------- Category cards ---------- */
+  .category-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;margin-top:16px;
+  }
+  .category-card{
+    text-align:left;background:#fff;border:1.5px solid var(--line);
+    border-radius:var(--radius);padding:22px;cursor:pointer;
+    font:inherit;color:inherit;display:flex;flex-direction:column;gap:6px;
+    transition:border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .category-card:hover{
+    border-color:var(--accent);
+    box-shadow:0 6px 20px rgba(14,116,144,.10);
+    transform:translateY(-2px);
+  }
+  .cat-name{font-weight:700;font-size:18px;letter-spacing:.6px;color:var(--brand);}
+  .cat-range{font-size:14px;color:var(--muted);}
+  .cat-hint{font-size:12px;color:#94a3b8;margin-top:4px;}
+
+  /* ---------- Form ---------- */
+  .form-topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:12px;flex-wrap:wrap;margin-bottom:16px;
+  }
+  .badge{
+    display:inline-block;background:var(--brand-light);color:var(--brand);
+    font-weight:700;font-size:12px;letter-spacing:.8px;
+    padding:4px 10px;border-radius:999px;margin-top:4px;
+  }
+  .form-section{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;margin-bottom:18px;background:#fff;
+  }
+  .section-title{
+    margin:0 0 16px;font-size:13px;text-transform:uppercase;letter-spacing:.9px;
+    color:var(--brand);padding-left:12px;border-left:4px solid var(--accent);
+    line-height:1.2;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:14px 18px;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.full{grid-column:1/-1;}
+  .field label{font-size:13px;font-weight:600;color:#334155;}
+
+  input,select,textarea{
+    width:100%;font:inherit;font-size:15px;color:var(--ink);
+    padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;
+    background:#fff;transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(14,116,144,.12);
+  }
+  input.readonly{
+    background:var(--brand-light);border-color:#cfe3ef;color:var(--brand);
+    font-weight:700;cursor:not-allowed;
+  }
+  textarea{resize:vertical;min-height:90px;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    font:inherit;font-weight:600;font-size:15px;padding:12px 22px;
+    border-radius:8px;border:1.5px solid transparent;cursor:pointer;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .btn.primary{background:var(--brand);color:#fff;}
+  .btn.primary:hover{background:#0a3d5c;}
+  .btn.ghost{background:#fff;color:var(--brand);border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--accent);background:var(--soft);}
+  .btn.small{padding:8px 14px;font-size:14px;}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 20px;}
+
+  /* ---------- Components table ---------- */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;}
+  .components-table{width:100%;border-collapse:collapse;min-width:660px;}
+  .components-table th{
+    text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--muted);padding:8px;border-bottom:2px solid var(--line);
+    font-weight:700;white-space:nowrap;
+  }
+  .components-table td{
+    padding:6px 8px;border-bottom:1px solid var(--soft);vertical-align:middle;
+  }
+  .components-table input{padding:9px 10px;font-size:14px;}
+  .comp-total{font-weight:700;color:var(--brand);white-space:nowrap;font-size:14px;}
+  .btn-icon{
+    background:#fff;border:1.5px solid var(--line);border-radius:6px;
+    width:34px;height:34px;cursor:pointer;color:#94a3b8;font-size:15px;
+    line-height:1;transition:.15s;
+  }
+  .btn-icon:hover{border-color:#ef4444;color:#ef4444;}
+
+  /* ---------- Result / preview ---------- */
+  .pdf-preview{
+    margin-top:16px;border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;height:72vh;min-height:420px;background:var(--soft);
+  }
+  .pdf-preview iframe{width:100%;height:100%;border:0;display:block;}
+
+  /* ---------- Mobile ---------- */
+  @media (max-width:600px){
+    .app-header h1{font-size:17px;}
+    .app-header p{font-size:12px;}
+    main.wrap{padding-top:20px;padding-bottom:60px;}
+    .form-section{padding:16px;}
+    .btn{width:100%;}
+    .actions{flex-direction:column;}
+    .form-topbar .btn{width:auto;}
+    .category-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="wrap header-inner">
+    <div class="brand-mark">☀</div>
+    <div>
+      <h1>Solar System Data Collection</h1>
+      <p>Select a category → fill in the data → generate &amp; download the PDF</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ================= STEP 1 ================= -->
+  <section id="categoryStep">
+    <h2 class="step-title">1. Select Category</h2>
+    <p class="muted">Choose the load category for this data sheet.</p>
+    <div class="category-grid">
+      <button type="button" class="category-card" data-cat="HEAVY">
+        <span class="cat-name">HEAVY</span>
+        <span class="cat-range">5,001 W – 10,000 W</span>
+        <span class="cat-hint">Heavy-duty load range</span>
+      </button>
+      <button type="button" class="category-card" data-cat="COMMERCIAL">
+        <span class="cat-name">COMMERCIAL</span>
+        <span class="cat-range">10,000 W – 20,000 W</span>
+        <span class="cat-hint">Commercial load range</span>
+      </button>
+      <button type="button" class="category-card" data-cat="INDUSTRIAL">
+        <span class="cat-name">INDUSTRIAL</span>
+        <span class="cat-range">20,000 W – 50,000 W</span>
+        <span class="cat-hint">Industrial load range</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= STEP 2 ================= -->
+  <section id="formStep" hidden>
+    <div class="form-topbar">
+      <div>
+        <h2 class="step-title">2. Fill in the data</h2>
+        <span class="badge" id="formCategoryBadge">—</span>
+      </div>
+      <button type="button" class="btn ghost small" id="backToCategories">← Change Category</button>
+    </div>
+
+    <form id="solarForm" autocomplete="off" novalidate>
+      <div id="formFields"></div>
+
+      <!-- Components list -->
+      <section class="form-section">
+        <h3 class="section-title">Components List</h3>
+        <div class="table-wrap">
+          <table class="components-table">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Specification</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="componentsBody"></tbody>
+          </table>
+        </div>
+        <button type="button" class="btn ghost small" id="addComponentBtn">+ Add Component</button>
+      </section>
+
+      <!-- Notes -->
+      <section class="form-section">
+        <h3 class="section-title">Notes</h3>
+        <textarea id="notes" rows="4" placeholder="Additional notes, remarks, site conditions…"></textarea>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn primary" id="generateBtn">Generate PDF</button>
+        <button type="button" class="btn ghost" id="clearBtn">Clear Form</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= STEP 3 ================= -->
+  <section id="resultStep" hidden>
+    <h2 class="step-title">3. Download your PDF</h2>
+    <p class="muted">Your data sheet has been generated. Preview it below, then download.</p>
+    <div class="actions">
+      <button type="button" class="btn primary" id="downloadBtn">Download PDF</button>
+      <button type="button" class="btn ghost" id="editBtn">← Edit Data</button>
+    </div>
+    <div class="pdf-preview">
+      <iframe id="pdfFrame" title="PDF preview"></iframe>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script>
+/* =========================================================
+   CONFIG
+   ========================================================= */
+
+const CATEGORIES = {
+  HEAVY:      { name: 'HEAVY',      minLoad: '5,001 W',  maxLoad: '10,000 W' },
+  COMMERCIAL: { name: 'COMMERCIAL', minLoad: '10,000 W', maxLoad: '20,000 W' },
+  INDUSTRIAL: { name: 'INDUSTRIAL', minLoad: '20,000 W', maxLoad: '50,000 W' }
+};
+
+const SECTIONS = [
+  {
+    title: 'Category / Setup Information',
+    fields: [
+      { id: 'category', label: 'Category', type: 'readonly', value: c => c.name }
+    ]
+  },
+  {
+    title: 'Load Range',
+    fields: [
+      { id: 'minLoad',         label: 'Minimum Load (W)', type: 'readonly', value: c => c.minLoad },
+      { id: 'maxLoad',         label: 'Maximum Load (W)', type: 'readonly', value: c => c.maxLoad },
+      { id: 'requiredLoad',    label: 'Required Load (W)',type: 'number', placeholder: 'e.g. 7500' },
+      { id: 'loadDescription', label: 'Load Description', type: 'text', placeholder: 'Equipment / appliances to be powered' }
+    ]
+  },
+  {
+    title: 'Power Specifications',
+    fields: [
+      { id: 'systemType',      label: 'System Type',            type: 'select', options: ['', 'On-Grid', 'Off-Grid', 'Hybrid'] },
+      { id: 'inverterRating',  label: 'Inverter Rating (W)',    type: 'number', placeholder: 'e.g. 8000' },
+      { id: 'panelWattage',    label: 'Solar Panel Wattage (W)',type: 'number', placeholder: 'e.g. 550' },
+      { id: 'panelQty',        label: 'Number of Panels',       type: 'number', placeholder: 'e.g. 16' },
+      { id: 'batteryType',     label: 'Battery Type',           type: 'select', options: ['', 'Lithium-Ion', 'Tubular Lead Acid', 'Gel', 'None'] },
+      { id: 'batteryCapacity', label: 'Battery Capacity (Ah)',  type: 'number', placeholder: 'e.g. 200' },
+      { id: 'batteryVoltage',  label: 'Battery Voltage (V)',    type: 'number', placeholder: 'e.g. 48' },
+      { id: 'batteryQty',      label: 'Number of Batteries',    type: 'number', placeholder: 'e.g. 4' }
+    ]
+  },
+  {
+    title: 'Voltage & Current',
+    fields: [
+      { id: 'systemVoltage',      label: 'System Voltage (V)',          type: 'number', placeholder: 'e.g. 48' },
+      { id: 'inputVoltage',       label: 'Inverter Input Voltage (V)',  type: 'number', placeholder: 'e.g. 48' },
+      { id: 'outputVoltage',      label: 'Inverter Output Voltage (V)', type: 'number', placeholder: 'e.g. 230' },
+      { id: 'maxChargeCurrent',   label: 'Max Charge Current (A)',      type: 'number', placeholder: 'e.g. 60' },
+      { id: 'maxDischargeCurrent',label: 'Max Discharge Current (A)',   type: 'number', placeholder: 'e.g. 120' },
+      { id: 'cableSize',          label: 'Cable Size (mm²)',            type: 'text',   placeholder: 'e.g. 25 mm²' }
+    ]
+  },
+  {
+    title: 'Backup / Duration',
+    fields: [
+      { id: 'backupHours',  label: 'Backup Hours Required',            type: 'number', placeholder: 'e.g. 8' },
+      { id: 'dailyEnergy',  label: 'Daily Energy Consumption (kWh)',   type: 'number', placeholder: 'e.g. 30' },
+      { id: 'autonomyDays', label: 'Days of Autonomy',                 type: 'number', placeholder: 'e.g. 1' },
+      { id: 'peakSunHours', label: 'Peak Sun Hours',                   type: 'number', placeholder: 'e.g. 4.5' }
+    ]
+  },
+  {
+    title: 'Component Specifications',
+    fields: [
+      { id: 'inverterModel',    label: 'Inverter Model',                type: 'text',   placeholder: 'Brand / model' },
+      { id: 'controllerType',   label: 'Charge Controller Type',        type: 'select', options: ['', 'MPPT', 'PWM'] },
+      { id: 'controllerRating', label: 'Charge Controller Rating (A)',  type: 'number', placeholder: 'e.g. 60' },
+      { id: 'mountingStructure',label: 'Mounting Structure',            type: 'text',   placeholder: 'Roof / ground / type' },
+      { id: 'surgeProtection',  label: 'Surge Protection',              type: 'text',   placeholder: 'Type / rating' },
+      { id: 'wiringType',       label: 'Wiring / Cable Type',           type: 'text',   placeholder: 'e.g. PV1-F 6 mm²' }
+    ]
+  },
+  {
+    title: 'Pricing & Costs',
+    fields: [
+      { id: 'priceUnit',        label: 'System Unit Price',  type: 'number', placeholder: '0.00' },
+      { id: 'priceInstall',     label: 'Installation Cost',  type: 'number', placeholder: '0.00' },
+      { id: 'priceAccessories', label: 'Accessories Cost',   type: 'number', placeholder: '0.00' },
+      { id: 'priceLabour',      label: 'Labour Cost',        type: 'number', placeholder: '0.00' },
+      { id: 'priceTransport',   label: 'Transport Cost',     type: 'number', placeholder: '0.00' },
+      { id: 'priceDiscount',    label: 'Discount',           type: 'number', placeholder: '0.00' },
+      { id: 'priceVat',         label: 'VAT / Tax (%)',      type: 'number', placeholder: 'e.g. 7.5' },
+      { id: 'priceTotal',       label: 'Total Cost',         type: 'readonly', value: () => '' }
+    ]
+  }
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let currentCategory = null;
+let generatedDoc = null;
+const fieldEls = {};
+
+const $ = sel => document.querySelector(sel);
+
+/* =========================================================
+   FORM BUILDING
+   ========================================================= */
+
+function buildField(f, cat) {
+  const wrap = document.createElement('div');
+  wrap.className = 'field';
+
+  const label = document.createElement('label');
+  label.htmlFor = 'f_' + f.id;
+  label.textContent = f.label;
+  wrap.appendChild(label);
+
+  let el;
+  if (f.type === 'select') {
+    el = document.createElement('select');
+    (f.options || []).forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o || '— Select —';
+      el.appendChild(opt);
+    });
+  } else if (f.type === 'textarea') {
+    el = document.createElement('textarea');
+    el.rows = 3;
+  } else {
+    el = document.createElement('input');
+    el.type = (f.type === 'readonly') ? 'text' : f.type;
+  }
+
+  el.id = 'f_' + f.id;
+  if (f.placeholder) el.placeholder = f.placeholder;
+
+  if (f.type === 'readonly') {
+    el.readOnly = true;
+    el.classList.add('readonly');
+    el.tabIndex = -1;
+    el.value = f.value ? f.value(cat) : '';
+  }
+
+  wrap.appendChild(el);
+  fieldEls[f.id] = el;
+  return wrap;
+}
+
+function buildForm(cat) {
+  Object.keys(fieldEls).forEach(k => delete fieldEls[k]);
+
+  const host = $('#formFields');
+  host.innerHTML = '';
+
+  SECTIONS.forEach(section => {
+    const sec = document.createElement('section');
+    sec.className = 'form-section';
+
+    const h = document.createElement('h3');
+    h.className = 'section-title';
+    h.textContent = section.title;
+    sec.appendChild(h);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    section.fields.forEach(f => grid.appendChild(buildField(f, cat)));
+    sec.appendChild(grid);
+
+    host.appendChild(sec);
+  });
+
+  // Live total cost
+  ['priceUnit','priceInstall','priceAccessories','priceLabour','priceTransport','priceDiscount','priceVat']
+    .forEach(id => {
+      if (fieldEls[id]) fieldEls[id].addEventListener('input', updateTotals);
+    });
+  updateTotals();
+
+  // Components table
+  document.getElementById('componentsBody').innerHTML = '';
+  addComponentRow();
+}
+
+function updateTotals() {
+  const num = id => {
+    const el = fieldEls[id];
+    if (!el) return 0;
+    const v = parseFloat(String(el.value).replace(/,/g, ''));
+    return isNaN(v) ? 0 : v;
+  };
+
+  const subtotal =
+    num('priceUnit') + num('priceInstall') + num('priceAccessories') +
+    num('priceLabour') + num('priceTransport') - num('priceDiscount');
+
+  const vat = subtotal * (num('priceVat') / 100);
+  const total = subtotal + vat;
+
+  if (fieldEls.priceTotal) {
+    fieldEls.priceTotal.value = (total !== 0) ? total.toFixed(2) : '';
+  }
+}
+
+/* =========================================================
+   COMPONENTS LIST
+   ========================================================= */
+
+function updateRowTotal(tr) {
+  const qty = parseFloat(tr.querySelector('.comp-qty').value) || 0;
+  const price = parseFloat(tr.querySelector('.comp-price').value) || 0;
+  const total = qty * price;
+  tr.querySelector('.comp-total').textContent = total ? total.toFixed(2) : '0.00';
+}
+
+function addComponentRow() {
+  const tbody = document.getElementById('componentsBody');
+  const tr = document.createElement('tr');
+
+  tr.innerHTML =
+    '<td><input type="text" class="comp-name" placeholder="Solar Panel"></td>' +
+    '<td><input type="text" class="comp-spec" placeholder="550W Monocrystalline"></td>' +
+    '<td><input type="number" class="comp-qty" min="0" step="1" placeholder="0"></td>' +
+    '<td><input type="number" class="comp-price" min="0" step="0.01" placeholder="0.00"></td>' +
+    '<td class="comp-total">0.00</td>' +
+    '<td><button type="button" class="btn-icon remove-row" title="Remove">&times;</button></td>';
+
+  tr.querySelector('.comp-qty').addEventListener('input', () => updateRowTotal(tr));
+  tr.querySelector('.comp-price').addEventListener('input', () => updateRowTotal(tr));
+
+  tr.querySelector('.remove-row').addEventListener('click', () => {
+    if (tbody.children.length === 1) {
+      tr.querySelectorAll('input').forEach(i => i.value = '');
+      updateRowTotal(tr);
+    } else {
+      tr.remove();
+    }
+  });
+
+  tbody.appendChild(tr);
+}
+
+function getComponents() {
+  return Array.from(document.querySelectorAll('#componentsBody tr'))
+    .map(tr => ({
+      name:  tr.querySelector('.comp-name').value.trim(),
+      spec:  tr.querySelector('.comp-spec').value.trim(),
+      qty:   tr.querySelector('.comp-qty').value.trim(),
+      price: tr.querySelector('.comp-price').value.trim(),
+      total: tr.querySelector('.comp-total').textContent.trim()
+    }))
+    .filter(c => c.name || c.spec || c.qty || c.price);
+}
+
+/* =========================================================
+   DATA COLLECTION
+   ========================================================= */
+
+function collectSections() {
+  return SECTIONS.map(sec => ({
+    title: sec.title,
+    rows: sec.fields.map(f => {
+      const el = fieldEls[f.id];
+      const v = el ? String(el.value).trim() : '';
+      return { label: f.label, value: v };
+    })
+  }));
+}
+
+/* =========================================================
+   PDF GENERATION
+   ========================================================= */
+
+function buildPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const M = 40;
+  const cat = CATEGORIES[currentCategory];
+
+  // ---- Footer (runs on every page) ----
+  const drawFooter = () => {
+    const pn = doc.internal.getNumberOfPages();
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(150, 160, 172);
+    doc.text('Solar System Data Sheet — ' + cat.name, M, pageH - 22);
+    doc.text('Page ' + pn, pageW - M, pageH - 22, { align: 'right' });
+  };
+
+  // ---- Header band ----
+  doc.setFillColor(12, 74, 110);
+  doc.rect(0, 0, pageW, 78, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(17);
+  doc.text('SOLAR SYSTEM DATA SHEET', M, 36);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text('Category: ' + cat.name + '   |   Load Range: ' + cat.minLoad + ' - ' + cat.maxLoad, M, 55);
+
+  doc.setFontSize(8);
+  doc.setTextColor(200, 222, 235);
+  doc.text('Generated: ' + new Date().toLocaleString(), M, 69);
+
+  // ---- All form sections in one flowing table ----
+  const body = [];
+  collectSections().forEach(sec => {
+    body.push([{
+      content: sec.title.toUpperCase(),
+      colSpan: 2,
+      styles: {
+        fillColor: [238, 246, 251],
+        textColor: [12, 74, 110],
+        fontStyle: 'bold',
+        fontSize: 9,
+        cellPadding: { top: 6, bottom: 6, left: 6, right: 6 }
+      }
+    }]);
+    sec.rows.forEach(r => body.push([r.label, r.value || '—']));
+  });
+
+  doc.autoTable({
+    startY: 100,
+    margin: { left: M, right: M, bottom: 50 },
+    theme: 'grid',
+    styles: {
+      font: 'helvetica',
+      fontSize: 9,
+      cellPadding: 5,
+      textColor: [30, 41, 59],
+      lineColor: [222, 230, 238],
+      lineWidth: 0.5,
+      overflow: 'linebreak'
+    },
+    columnStyles: {
+      0: { cellWidth: 185, fontStyle: 'bold', textColor: [71, 85, 105] },
+      1: { cellWidth: 'auto' }
+    },
+    body: body,
+    didDrawPage: drawFooter
+  });
+
+  // ---- Components list ----
+  let y = doc.lastAutoTable.finalY + 24;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(12, 74, 110);
+  doc.text('COMPONENTS LIST', M, y);
+  y += 8;
+
+  const comps = getComponents();
+
+  doc.autoTable({
+    startY: y,
+    margin: { left: M, right: M, bottom: 50 },
+    theme: 'grid',
+    head: [['#', 'Component', 'Specification', 'Qty', 'Unit Price', 'Total']],
+    body: comps.length
+      ? comps.map((c, i) => [i + 1, c.name || '—', c.spec || '—', c.qty || '—', c.price || '—', c.total || '—'])
+      : [[{
+          content: 'No components listed.',
+          colSpan: 6,
+          styles: { halign: 'center', textColor: [140, 150, 160], fontStyle: 'italic' }
+        }]],
+    headStyles: {
+      fillColor: [12, 74, 110],
+      textColor: 255,
+      fontSize: 8.5,
+      fontStyle: 'bold'
+    },
+    styles: {
+      font: 'helvetica',
+      fontSize: 8.5,
+      cellPadding: 5,
+      lineColor: [222, 230, 238],
+      lineWidth: 0.5,
+      textColor: [30, 41, 59],
+      overflow: 'linebreak'
+    },
+    columnStyles: {
+      0: { cellWidth: 26, halign: 'center' },
+      3: { cellWidth: 40, halign: 'center' },
+      4: { cellWidth: 66, halign: 'right' },
+      5: { cellWidth: 66, halign: 'right' }
+    },
+    didDrawPage: drawFooter
+  });
+
+  // ---- Notes ----
+  const notes = document.getElementById('notes').value.trim();
+  if (notes) {
+    let ny = doc.lastAutoTable.finalY + 24;
+    if (ny > pageH - 100) {
+      doc.addPage();
+      ny = 60;
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(12, 74, 110);
+    doc.text('NOTES', M, ny);
+    ny += 8;
+
+    doc.autoTable({
+      startY: ny,
+      margin: { left: M, right: M, bottom: 50 },
+      theme: 'grid',
+      styles: {
+        font: 'helvetica',
+        fontSize: 9,
+        cellPadding: 6,
+        lineColor: [222, 230, 238],
+        lineWidth: 0.5,
+        textColor: [30, 41, 59],
+        overflow: 'linebreak'
+      },
+      body: [[notes]],
+      didDrawPage: drawFooter
+    });
+  }
+
+  return doc;
+}
+
+/* =========================================================
+   FLOW / EVENTS
+   ========================================================= */
+
+function startForm(key) {
+  currentCategory = key;
+  const cat = CATEGORIES[key];
+
+  $('#formCategoryBadge').textContent = cat.name;
+  document.getElementById('notes').value = '';
+
+  buildForm(cat);
+
+  $('#categoryStep').hidden = true;
+  $('#resultStep').hidden = true;
+  $('#formStep').hidden = false;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.category-card').forEach(btn => {
+  btn.addEventListener('click', () => startForm(btn.dataset.cat));
+});
+
+$('#addComponentBtn').addEventListener('click', () => addComponentRow());
+
+$('#backToCategories').addEventListener('click', () => {
+  $('#formStep').hidden = true;
+  $('#resultStep').hidden = true;
+  $('#categoryStep').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+$('#clearBtn').addEventListener('click', () => {
+  if (!currentCategory) return;
+  if (!confirm('Clear all entered data?')) return;
+  document.getElementById('notes').value = '';
+  buildForm(CATEGORIES[currentCategory]);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+$('#generateBtn').addEventListener('click', () => {
+  if (!currentCategory) return;
+  try {
+    generatedDoc = buildPDF();
+    const url = generatedDoc.output('bloburl');
+    $('#pdfFrame').src = url;
+
+    $('#formStep').hidden = true;
+    $('#resultStep').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    alert('Could not generate the PDF: ' + err.message);
+  }
+});
+
+$('#downloadBtn').addEventListener('click', () => {
+  if (!generatedDoc || !currentCategory) return;
+  const d = new Date();
+  const stamp =
+    d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+
+  generatedDoc.save('Solar-Data-' + currentCategory + '-' + stamp + '.pdf');
+});
+
+$('#editBtn').addEventListener('click', () => {
+  $('#resultStep').hidden = true;
+  $('#formStep').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>
