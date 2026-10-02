@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0f2038" />
+<title>SolarQuote Pro — Solar Quotation Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   SolarQuote Pro — All-in-one stylesheet
+   ========================================================================= */
+:root{
+  --navy:#0f2038; --navy-2:#16305a; --navy-3:#1d3f74;
+  --accent:#f59e0b; --accent-2:#fbbf24;
+  --blue:#1e6fd9; --bg:#f4f6fa; --card:#ffffff;
+  --text:#16202e; --muted:#68788e; --border:#e4e9f1;
+  --danger:#dc2626; --warn:#b45309; --ok:#15803d;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 1px 2px rgba(16,32,56,.04), 0 8px 24px rgba(16,32,56,.06);
+  --shadow-lg:0 24px 60px rgba(16,32,56,.20);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+body.no-scroll{overflow:hidden;}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em;}
+h1{font-size:24px;} h2{font-size:19px;} h3{font-size:15px;} h4{font-size:13px;}
+p{margin:0;}
+button{font-family:inherit;}
+input,select,textarea{font-family:inherit;}
+.container{width:100%;max-width:1280px;margin:0 auto;padding:0 20px;}
+.hidden{display:none !important;}
+.right{text-align:right;}
+.muted{color:var(--muted);}
+.sm-text{font-size:12px;}
+.mt-8{margin-top:8px;}
+
+/* HEADER */
+.app-header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--border);}
+.header-inner{display:flex;align-items:center;gap:16px;min-height:68px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none;}
+.brand-logo{width:40px;height:40px;border-radius:12px;flex:none;background:linear-gradient(140deg,var(--navy) 0%,var(--navy-3) 100%);color:var(--accent-2);display:grid;place-items:center;font-weight:800;font-size:18px;overflow:hidden;box-shadow:0 6px 16px rgba(15,32,56,.22);}
+.brand-logo img{width:100%;height:100%;object-fit:cover;}
+.brand-text{display:flex;flex-direction:column;line-height:1.2;}
+.brand-text strong{font-size:15px;font-weight:800;}
+.brand-text span{font-size:11px;color:var(--muted);}
+.main-nav{display:flex;gap:4px;margin-left:auto;}
+.nav-btn{background:transparent;border:0;padding:9px 16px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;}
+.nav-btn:hover{background:#eef2f8;color:var(--text);}
+.nav-btn.active{background:var(--navy);color:#fff;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--border);background:#fff;color:var(--text);padding:10px 16px;border-radius:11px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap;}
+.btn:hover{background:#f6f8fc;border-color:#d5dce8;}
+.btn:active{transform:translateY(1px);}
+.btn.primary{background:linear-gradient(140deg,var(--navy) 0%,var(--navy-3) 100%);color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(15,32,56,.22);}
+.btn.primary:hover{filter:brightness(1.12);}
+.btn.ghost{background:#fff;}
+.btn.small{padding:7px 12px;font-size:12.5px;border-radius:9px;}
+.btn.block{width:100%;}
+.btn.danger-text{color:var(--danger);}
+.btn .plus{font-size:17px;line-height:1;margin-top:-1px;}
+.icon-btn{background:transparent;border:1px solid transparent;border-radius:9px;width:30px;height:30px;display:inline-grid;place-items:center;cursor:pointer;font-size:14px;color:var(--muted);transition:.15s;}
+.icon-btn:hover{background:#eef2f8;color:var(--text);}
+.icon-btn.danger:hover{background:#fdecec;color:var(--danger);}
+
+/* LAYOUT */
+.app-main{padding-top:26px;padding-bottom:80px;}
+.view{animation:fade .22s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.page-head h1{margin-bottom:4px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#fbfcfe 0%,#fff 100%);}
+.card-head.spread{justify-content:space-between;}
+.card-head.wrap{flex-wrap:wrap;}
+.card-body{padding:20px;}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;}
+.toolbar .input{min-width:180px;}
+
+/* STATS */
+.stats-grid{display:grid;gap:14px;margin-bottom:22px;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.stat-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);opacity:.85;}
+.stat-card.draft::after{background:var(--accent);}
+.stat-card.completed::after{background:var(--ok);}
+.stat-card.downloaded::after{background:var(--navy-3);}
+.stat-card.value::after{background:linear-gradient(180deg,var(--accent),var(--blue));}
+.stat-label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.stat-value{font-size:22px;font-weight:800;margin:6px 0 2px;letter-spacing:-.02em;}
+.stat-sub{font-size:11.5px;color:var(--muted);}
+
+/* TABLES */
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius-sm);}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table thead th{background:#f7f9fc;color:#4a5a70;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:11px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+.data-table tbody td{padding:10px 12px;border-bottom:1px solid #f0f3f8;vertical-align:middle;}
+.data-table tbody tr:hover{background:#fafbfe;}
+.data-table tbody tr:last-child td{border-bottom:0;}
+.bom-table{min-width:820px;}
+.comp-table{min-width:700px;}
+.data-table .empty{text-align:center;color:var(--muted);padding:26px;font-size:13px;}
+.data-table .idx{color:var(--muted);font-weight:600;width:36px;}
+.status{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.status.ok{background:#e8f7ee;color:var(--ok);}
+.status.warn{background:#fef4e2;color:#b45309;}
+.badge{display:inline-block;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;background:#eef2f8;color:#46556b;}
+.badge.heavy{background:#fdecec;color:#b91c1c;}
+.badge.premium{background:#fff7e6;color:#b45309;}
+.badge.commercial{background:#e8f0fd;color:#1d4ed8;}
+.badge.industrial{background:#e8f7ee;color:#15803d;}
+.actions{white-space:nowrap;}
+
+/* FORMS */
+.form-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field.full{grid-column:1 / -1;}
+.field label{font-size:12px;font-weight:600;color:#46556b;}
+.field .req{color:var(--danger);}
+.input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:13.5px;color:var(--text);transition:.15s;outline:none;}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,111,217,.12);}
+.input.sm{padding:7px 9px;font-size:12.5px;border-radius:8px;}
+.input:disabled, .input[readonly]{background:#f4f6fa;color:#5b6b80;cursor:not-allowed;}
+textarea.input{resize:vertical;min-height:44px;line-height:1.5;}
+input[type=number].input{font-variant-numeric:tabular-nums;}
+
+/* FIXED LOAD LIMITS BLOCK */
+.limits-block{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 18px;border-radius:12px;margin-bottom:20px;background:linear-gradient(135deg,#f0f5ff 0%,#eaf1fd 100%);border:1px solid #cfe0fb;}
+.limits-icon{width:38px;height:38px;border-radius:10px;flex:none;background:var(--navy);color:var(--accent-2);display:grid;place-items:center;font-size:16px;}
+.limits-text{flex:1;min-width:180px;}
+.limits-text strong{display:block;font-size:13px;color:var(--navy);}
+.limits-text span{font-size:11.5px;color:#5b6b80;}
+.limits-values{display:flex;gap:12px;flex-wrap:wrap;}
+.limit-pill{background:#fff;border:1px solid #cfe0fb;border-radius:10px;padding:8px 14px;min-width:130px;}
+.limit-pill span{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7a8798;}
+.limit-pill strong{font-size:15px;color:var(--navy);font-variant-numeric:tabular-nums;}
+.actual-load-wrap{display:flex;flex-direction:column;gap:6px;}
+.load-warning{display:none;padding:9px 12px;border-radius:9px;font-size:12px;border:1px solid;line-height:1.45;}
+.load-warning.show{display:block;}
+.load-warning.below{background:#fff7e6;border-color:#fde68a;color:#92400e;}
+.load-warning.above{background:#fef2f2;border-color:#fecaca;color:#991b1b;}
+.load-warning strong{font-weight:700;}
+
+/* EDITOR */
+.editor-topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+.editor-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.editor-title h2{font-size:18px;}
+.editor-actions{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap;}
+.editor-grid{display:grid;gap:20px;grid-template-columns:minmax(0,1fr) 340px;align-items:start;}
+.editor-aside{position:sticky;top:88px;}
+.editor-main{min-width:0;}
+.summary-card{margin-bottom:0;}
+.sum-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;font-size:13.5px;color:#3c4a5e;border-bottom:1px dashed #eef1f6;}
+.sum-row:last-of-type{border-bottom:0;}
+.sum-row strong{font-variant-numeric:tabular-nums;font-weight:700;}
+.sum-row.subtotal{margin-top:6px;padding-top:13px;border-top:2px solid var(--border);border-bottom:0;font-weight:700;color:var(--text);font-size:14px;}
+.sum-row.total{margin-top:8px;padding:14px 12px;border-radius:12px;background:linear-gradient(140deg,var(--navy) 0%,var(--navy-3) 100%);color:#fff;font-weight:800;font-size:15px;border:0;}
+.sum-row.total strong{color:var(--accent-2);font-size:17px;}
+.sum-row.vat-row{border-bottom:1px dashed #eef1f6;padding-top:11px;padding-bottom:11px;}
+.vat-input{width:82px !important;text-align:right;}
+.summary-actions{display:flex;flex-direction:column;gap:9px;margin-top:18px;}
+.error-box{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:18px;font-size:13px;}
+.error-box ul{margin:8px 0 0;padding-left:20px;}
+.error-box li{margin-bottom:3px;}
+
+/* SETTINGS */
+.logo-row{display:flex;gap:20px;align-items:center;margin-top:22px;padding-top:20px;border-top:1px dashed var(--border);flex-wrap:wrap;}
+.logo-preview{width:96px;height:96px;border-radius:14px;border:2px dashed var(--border);display:grid;place-items:center;font-size:11px;color:var(--muted);background:#fafbfe;overflow:hidden;flex:none;text-align:center;padding:6px;}
+.logo-preview img{width:100%;height:100%;object-fit:contain;}
+.logo-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+.settings-actions{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;}
+
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;z-index:200;display:none;background:rgba(12,22,38,.62);backdrop-filter:blur(4px);padding:26px 16px;overflow:auto;}
+.overlay.open{display:block;animation:fade .18s ease;}
+.modal{max-width:880px;margin:40px auto;background:#fff;border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.config-grid{display:grid;gap:16px;padding:22px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+.config-card{border:1.5px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:.18s;background:#fff;text-align:left;}
+.config-card:hover{border-color:var(--navy-3);transform:translateY(-3px);box-shadow:var(--shadow);}
+.config-card .cc-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;margin-bottom:12px;background:#eef2f8;}
+.config-card.heavy .cc-icon{background:#fdecec;}
+.config-card.premium .cc-icon{background:#fff7e6;}
+.config-card.commercial .cc-icon{background:#e8f0fd;}
+.config-card.industrial .cc-icon{background:#e8f7ee;}
+.config-card h4{margin-bottom:6px;font-size:15px;}
+.config-card p{font-size:12.5px;color:var(--muted);line-height:1.5;}
+.config-card .cc-limits{margin-top:10px;font-size:11.5px;font-weight:700;color:var(--navy-3);background:#f4f6fa;padding:6px 10px;border-radius:8px;display:inline-block;}
+.overlay-inner{max-width:1000px;margin:0 auto;background:#eef1f6;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-lg);}
+.overlay-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 20px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;position:sticky;top:0;z-index:5;}
+.overlay-actions{display:flex;gap:9px;flex-wrap:wrap;}
+.overlay-body{padding:24px 16px;max-height:calc(100vh - 150px);overflow:auto;}
+
+/* TOAST */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:13.5px;font-weight:600;z-index:500;box-shadow:var(--shadow-lg);animation:toastIn .22s ease;max-width:90vw;text-align:center;}
+.toast.error{background:#b91c1c;}
+.toast.success{background:#15803d;}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,14px);}to{opacity:1;transform:translate(-50%,0);}}
+
+/* PRINT QUOTATION DOC */
+.doc{width:100%;max-width:820px;margin:0 auto;background:#fff;padding:44px 48px;box-shadow:0 10px 40px rgba(16,32,56,.14);border-radius:6px;color:#1c2635;font-size:12.5px;line-height:1.55;}
+.doc-header{display:flex;justify-content:space-between;gap:24px;padding-bottom:20px;border-bottom:3px solid var(--navy);flex-wrap:wrap;}
+.doc-brand{display:flex;gap:14px;align-items:flex-start;}
+.doc-logo{width:60px;height:60px;border-radius:12px;flex:none;overflow:hidden;background:linear-gradient(140deg,var(--navy),var(--navy-3));color:var(--accent-2);display:grid;place-items:center;font-size:24px;font-weight:800;}
+.doc-logo img{width:100%;height:100%;object-fit:contain;background:#fff;}
+.doc-company h2{font-size:18px;margin-bottom:3px;color:var(--navy);}
+.doc-company p{font-size:11px;color:#5b6b80;line-height:1.55;}
+.doc-title{text-align:right;}
+.doc-title h1{font-size:21px;letter-spacing:.06em;color:var(--navy);margin-bottom:4px;}
+.doc-title .sub{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;}
+.doc-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;border:1px solid #e4e9f1;border-radius:10px;overflow:hidden;margin-top:22px;}
+.doc-meta div{padding:10px 14px;border-right:1px solid #eef1f6;border-bottom:1px solid #eef1f6;}
+.doc-meta span{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:#7a8798;font-weight:700;margin-bottom:3px;}
+.doc-meta strong{font-size:12.5px;color:#1c2635;}
+.doc-section{margin-top:26px;}
+.doc-section > h3{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--navy);padding-bottom:7px;border-bottom:1.5px solid var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:9px;}
+.doc-section > h3::before{content:'';width:4px;height:12px;border-radius:2px;background:var(--accent);}
+.doc-table{width:100%;border-collapse:collapse;font-size:11.5px;}
+.doc-table th{background:var(--navy);color:#fff;text-align:left;padding:9px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
+.doc-table td{padding:8px 10px;border-bottom:1px solid #eef1f6;vertical-align:top;}
+.doc-table tr:last-child td{border-bottom:0;}
+.doc-table .r{text-align:right;font-variant-numeric:tabular-nums;}
+.doc-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.doc-kv{display:flex;flex-direction:column;gap:8px;}
+.doc-kv .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed #eef1f6;font-size:11.5px;}
+.doc-kv .row span{color:#5b6b80;}
+.doc-kv .row strong{font-variant-numeric:tabular-nums;text-align:right;}
+.fixed-limits-doc{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;border-radius:10px;background:#f4f7fc;border:1px solid #cfe0fb;}
+.fixed-limits-doc .fl-cell{padding:6px 8px;}
+.fixed-limits-doc .fl-cell span{display:block;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#7a8798;margin-bottom:2px;}
+.fixed-limits-doc .fl-cell strong{font-size:14px;color:var(--navy);}
+.doc-totals{margin-top:14px;margin-left:auto;max-width:340px;font-size:12px;}
+.doc-totals .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #eef1f6;}
+.doc-totals .row.sub{border-top:1.5px solid var(--navy);padding-top:9px;font-weight:700;}
+.doc-totals .row.grand{margin-top:8px;background:var(--navy);color:#fff;padding:11px 13px;border-radius:9px;border:0;font-weight:800;}
+.doc-totals .row.grand strong{color:var(--accent-2);}
+.doc-terms{margin-top:22px;padding:14px 16px;background:#f7f9fc;border-radius:10px;font-size:11px;color:#46556b;line-height:1.6;}
+.doc-terms h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);margin-bottom:6px;}
+.doc-sign{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+.doc-sign .sig-box{border-top:1.5px solid #cdd5e0;padding-top:8px;font-size:11px;color:#5b6b80;}
+.doc-sign .sig-box strong{display:block;color:var(--navy);font-size:12px;margin-bottom:2px;}
+.doc-footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--border);text-align:center;font-size:10.5px;color:#7a8798;}
+
+/* RESPONSIVE */
+@media (max-width:1024px){.editor-grid{grid-template-columns:1fr;}.editor-aside{position:static;}}
+@media (max-width:720px){
+  .container{padding:0 14px;}
+  h1{font-size:20px;}
+  .card-body{padding:16px;}
+  .card-head{padding:14px 16px;}
+  .header-inner{min-height:auto;padding:12px 0;}
+  .brand-text span{display:none;}
+  .editor-actions{width:100%;}
+  .editor-actions .btn{flex:1;}
+  .doc{padding:26px 20px;font-size:12px;}
+  .doc-header{flex-direction:column;gap:14px;}
+  .doc-title{text-align:left;}
+  .doc-grid-2{grid-template-columns:1fr;}
+  .doc-sign{grid-template-columns:1fr;gap:22px;}
+  .fixed-limits-doc{grid-template-columns:1fr;}
+}
+@media (max-width:520px){
+  .stat-value{font-size:18px;}
+  .limits-block{flex-direction:column;align-items:flex-start;}
+  .limits-values{width:100%;}
+  .limit-pill{flex:1;}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="container header-inner">
+    <div class="brand" id="brandBlock" role="button" tabindex="0" title="Go to dashboard">
+      <div class="brand-logo" id="brandLogo">S</div>
+      <div class="brand-text">
+        <strong id="brandName">SolarQuote Pro</strong>
+        <span id="brandTag">Solar Quotation Generator</span>
+      </div>
+    </div>
+    <nav class="main-nav" id="mainNav">
+      <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+      <button class="nav-btn" data-view="settings">Settings</button>
+    </nav>
+    <button class="btn primary" id="btnNewQuotation">
+      <span class="plus">+</span><span>Create New Quotation</span>
+    </button>
+  </div>
+</header>
+
+<main class="container app-main">
+
+  <!-- DASHBOARD -->
+  <section id="view-dashboard" class="view">
+    <div class="page-head">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="muted">Create, manage and download professional solar quotations.</p>
+      </div>
+    </div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="card">
+      <div class="card-head spread wrap">
+        <h3>Quotations</h3>
+        <div class="toolbar">
+          <input type="search" id="searchInput" class="input" placeholder="Search by number, company…" />
+          <select id="statusFilter" class="input">
+            <option value="all">All quotations</option>
+            <option value="draft">Draft quotations</option>
+            <option value="completed">Completed</option>
+            <option value="downloaded">Downloaded</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table" id="quotesTable">
+            <thead>
+              <tr>
+                <th>Quotation #</th><th>Reference</th><th>Configuration</th>
+                <th>Date</th><th class="right">Total</th><th>Status</th><th class="right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="quotesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDITOR -->
+  <section id="view-editor" class="view hidden">
+    <div class="editor-topbar">
+      <button class="btn ghost" id="btnBackToDash">← Back</button>
+      <div class="editor-title">
+        <h2 id="editorTitle">New Quotation</h2>
+        <span class="badge" id="editorConfigBadge">—</span>
+      </div>
+      <div class="editor-actions">
+        <button class="btn ghost" id="btnClearForm">Clear / Reset</button>
+        <button class="btn ghost" id="btnSaveDraft">Save Draft</button>
+        <button class="btn ghost" id="btnPreviewTop">Preview PDF</button>
+        <button class="btn primary" id="btnDownloadTop">Download PDF</button>
+      </div>
+    </div>
+
+    <div id="errorBox" class="error-box" hidden></div>
+
+    <div class="editor-grid">
+      <div class="editor-main">
+        <div class="card">
+          <div class="card-head spread wrap">
+            <h3>System Configuration</h3>
+            <span class="muted sm-text" id="systemConfigName"></span>
+          </div>
+          <div class="card-body" id="systemFields"></div>
+        </div>
+        <div class="card">
+          <div class="card-head spread wrap">
+            <h3>Bill of Materials</h3>
+            <button class="btn small" id="btnAddBom">+ Add Component</button>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="data-table bom-table">
+                <thead>
+                  <tr>
+                    <th>#</th><th>Component</th><th>Specification</th><th>Cost Group</th>
+                    <th class="right">Qty</th><th class="right">Unit Price (₦)</th>
+                    <th class="right">Total</th><th></th>
+                  </tr>
+                </thead>
+                <tbody id="bomBody"></tbody>
+              </table>
+            </div>
+            <p class="muted sm-text mt-8">“Cost Group” decides which pricing line the item rolls into (Equipment Cost, Protection Devices, Installation Cost or Logistics).</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head spread wrap">
+            <h3>Components List</h3>
+            <button class="btn small" id="btnAddComponent">+ Add Component</button>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="data-table comp-table">
+                <thead>
+                  <tr>
+                    <th>Component</th><th>Specification</th>
+                    <th class="right">Quantity</th><th>Notes</th><th></th>
+                  </tr>
+                </thead>
+                <tbody id="componentsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="editor-aside">
+        <div class="card summary-card">
+          <div class="card-head"><h3>Cost Breakdown</h3></div>
+          <div class="card-body">
+            <div class="sum-row"><span>Equipment Cost</span><strong id="sumEquipment">₦0.00</strong></div>
+            <div class="sum-row"><span>Protection Devices</span><strong id="sumProtection">₦0.00</strong></div>
+            <div class="sum-row"><span>Installation Cost</span><strong id="sumInstallation">₦0.00</strong></div>
+            <div class="sum-row"><span>Logistics</span><strong id="sumLogistics">₦0.00</strong></div>
+            <div class="sum-row" id="rowOther" hidden><span>Other Charges</span><strong id="sumOther">₦0.00</strong></div>
+            <div class="sum-row subtotal"><span>Subtotal</span><strong id="sumSubtotal">₦0.00</strong></div>
+            <div class="sum-row vat-row">
+              <span>VAT (%)</span>
+              <input class="input sm vat-input" type="number" min="0" max="100" step="0.5" id="vatInput" data-scope="quote" data-key="vatPercent" />
+            </div>
+            <div class="sum-row"><span>VAT Amount</span><strong id="sumVat">₦0.00</strong></div>
+            <div class="sum-row total"><span>Grand Total</span><strong id="sumTotal">₦0.00</strong></div>
+            <div class="summary-actions">
+              <button class="btn ghost block" id="btnPreviewSide">Preview PDF</button>
+              <button class="btn primary block" id="btnDownloadSide">Download PDF</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="view-settings" class="view hidden">
+    <div class="page-head">
+      <div>
+        <h1>Company Settings</h1>
+        <p class="muted">These details appear on every quotation PDF you generate.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Company Profile</h3></div>
+      <div class="card-body">
+        <div class="form-grid" id="settingsFields"></div>
+        <div class="logo-row">
+          <div class="logo-preview" id="logoPreview">No logo</div>
+          <div class="logo-actions">
+            <input type="file" id="logoInput" accept="image/png,image/jpeg,image/jpg" hidden />
+            <button class="btn ghost" id="btnUploadLogo">Upload Logo</button>
+            <button class="btn ghost danger-text" id="btnRemoveLogo">Remove Logo</button>
+            <p class="muted sm-text">PNG or JPG. Square images look best in the PDF header.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-actions">
+      <button class="btn ghost" id="btnResetSettings">Reset to Defaults</button>
+      <button class="btn primary" id="btnSaveSettings">Save Settings</button>
+    </div>
+  </section>
+</main>
+
+<!-- CONFIG MODAL -->
+<div class="overlay" id="configOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>Select a Configuration</h3>
+        <p class="muted sm-text">Each configuration loads its own fields, BOM and fixed load limits.</p>
+      </div>
+      <button class="icon-btn" id="btnCloseConfig" title="Close">✕</button>
+    </div>
+    <div class="config-grid" id="configGrid"></div>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="overlay" id="previewOverlay">
+  <div class="overlay-inner">
+    <div class="overlay-bar">
+      <strong>PDF Preview</strong>
+      <div class="overlay-actions">
+        <button class="btn ghost" id="btnClosePreview">Close</button>
+        <button class="btn ghost" id="btnPrintPdf">Print PDF</button>
+        <button class="btn primary" id="btnDownloadPdf">Download PDF</button>
+      </div>
+    </div>
+    <div class="overlay-body" id="previewBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+/* =========================================================================
+   SolarQuote Pro — app.js (all-in-one) — customer info removed
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1) FIXED LOAD LIMITS — single source of truth.
+   ------------------------------------------------------------------------- */
+const FIXED_LOAD_LIMITS = Object.freeze({
+  premium:    Object.freeze({ minLoadW: 2001,  maxLoadW: 5000  }),
+  commercial: Object.freeze({ minLoadW: 10000, maxLoadW: 20000 }),
+  heavy:      Object.freeze({ minLoadW: 5001,  maxLoadW: 10000 }),
+  industrial: Object.freeze({ minLoadW: 20000, maxLoadW: 50000 })
+});
+
+/* -------------------------------------------------------------------------
+   2) CONFIGURATIONS
+   ------------------------------------------------------------------------- */
+const CONFIGURATIONS = {
+  premium: {
+    id:'premium', name:'Premium', icon:'⚡', tagline:'Compact premium setup',
+    description:'Entry-level premium solar setup for compact homes and light commercial use.',
+    fields:[
+      { key:'setupName',          label:'Setup Name',              type:'text',     def:'Premium Solar Setup' },
+      { key:'description',        label:'Description',             type:'textarea', def:'Compact premium configuration for residential and light-commercial use.' },
+      { key:'actualLoadW',        label:'Actual Required Load (W)',type:'number',   def:'' },
+      { key:'surgeLoadCapacityW', label:'Surge Load Capacity (W)', type:'number',   def:'6000' },
+      { key:'systemVoltage',      label:'System Voltage',          type:'text',     def:'48 V' },
+      { key:'backupHours',        label:'Backup Hours',            type:'text',     def:'8 hours' },
+      { key:'panelCount600w',     label:'Panel Count (600W)',      type:'number',   def:'8' },
+      { key:'totalSolarArray',    label:'Total Solar Array',       type:'text',     def:'4,800 W' }
+    ],
+    bom:[
+      { component:'Solar Panels', specification:'600W Mono PERC',            quantity:8, unitPrice:85000,   costGroup:'equipment' },
+      { component:'Inverter',     specification:'5kVA Hybrid Inverter',      quantity:1, unitPrice:550000,  costGroup:'equipment' },
+      { component:'Battery',      specification:'48V 200Ah Lithium',         quantity:1, unitPrice:1500000, costGroup:'equipment' },
+      { component:'Protection',   specification:'Premium Protection System', quantity:1, unitPrice:180000,  costGroup:'protection' },
+      { component:'Installation', specification:'Premium Installation',      quantity:1, unitPrice:250000,  costGroup:'installation' },
+      { component:'Logistics',    specification:'Lagos Logistics - Premium', quantity:1, unitPrice:120000,  costGroup:'logistics' }
+    ],
+    components:[
+      { component:'Solar Panels', specification:'600W Mono',                quantity:'8', notes:'' },
+      { component:'Inverter',     specification:'5kVA Hybrid Inverter',     quantity:'1', notes:'' },
+      { component:'Battery',      specification:'48V 200Ah Lithium',        quantity:'1', notes:'' },
+      { component:'Protection',   specification:'Premium Protection System',quantity:'1', notes:'' },
+      { component:'Installation', specification:'Premium Installation',     quantity:'1', notes:'' },
+      { component:'Logistics',    specification:'Lagos Logistics - Premium',quantity:'1', notes:'' }
+    ]
+  },
+  commercial: {
+    id:'commercial', name:'Commercial', icon:'🏢', tagline:'Commercial-grade solution',
+    description:'Commercial solar solution for offices, retail outlets and mid-size businesses.',
+    fields:[
+      { key:'setupName',          label:'Setup Name',              type:'text',     def:'Commercial Solar Setup' },
+      { key:'description',        label:'Description',             type:'textarea', def:'Commercial configuration for offices, retail and mid-size business premises.' },
+      { key:'actualLoadW',        label:'Actual Required Load (W)',type:'number',   def:'' },
+      { key:'surgeLoadCapacityW', label:'Surge Load Capacity (W)', type:'number',   def:'30000' },
+      { key:'systemVoltage',      label:'System Voltage',          type:'text',     def:'48 V' },
+      { key:'backupHours',        label:'Backup Hours',            type:'text',     def:'12 hours' },
+      { key:'panelCount600w',     label:'Panel Count (600W)',      type:'number',   def:'34' },
+      { key:'totalSolarArray',    label:'Total Solar Array',       type:'text',     def:'20,400 W' }
+    ],
+    bom:[
+      { component:'Solar Panels', specification:'600W Mono',                   quantity:34, unitPrice:85000,   costGroup:'equipment' },
+      { component:'Inverter',     specification:'20kVA Three-Phase Inverter',  quantity:1,  unitPrice:1800000, costGroup:'equipment' },
+      { component:'Battery',      specification:'48V 800Ah Lithium',           quantity:1,  unitPrice:5200000, costGroup:'equipment' },
+      { component:'Protection',   specification:'Commercial Protection System',quantity:1,  unitPrice:650000,  costGroup:'protection' },
+      { component:'Installation', specification:'Commercial Installation',     quantity:1,  unitPrice:850000,  costGroup:'installation' },
+      { component:'Logistics',    specification:'Lagos Logistics - Commercial',quantity:1,  unitPrice:300000,  costGroup:'logistics' }
+    ],
+    components:[
+      { component:'Solar Panels', specification:'600W Mono',                     quantity:'34', notes:'' },
+      { component:'Inverter',     specification:'20kVA Three-Phase Inverter',    quantity:'1',  notes:'' },
+      { component:'Battery',      specification:'48V 800Ah Lithium',             quantity:'1',  notes:'' },
+      { component:'Protection',   specification:'Commercial Protection System',  quantity:'1',  notes:'' },
+      { component:'Installation', specification:'Commercial Installation',       quantity:'1',  notes:'' },
+      { component:'Logistics',    specification:'Lagos Logistics - Commercial',  quantity:'1',  notes:'' }
+    ]
+  },
+  heavy: {
+    id:'heavy', name:'Heavy', icon:'🔋', tagline:'Heavy-duty premium system',
+    description:'High-capacity solar solution for large homes and demanding loads.',
+    fields:[
+      { key:'setupName',          label:'Setup Name',              type:'text',     def:'Heavy Duty Solar Setup' },
+      { key:'description',        label:'Description',             type:'textarea', def:'Heavy configuration for large residential and small commercial installations.' },
+      { key:'actualLoadW',        label:'Actual Required Load (W)',type:'number',   def:'' },
+      { key:'surgeLoadCapacityW', label:'Surge Load Capacity (W)', type:'number',   def:'15000' },
+      { key:'systemVoltage',      label:'System Voltage',          type:'text',     def:'48 V' },
+      { key:'backupHours',        label:'Backup Hours',            type:'text',     def:'12 hours' },
+      { key:'panelCount600w',     label:'Panel Count (600W)',      type:'number',   def:'20' },
+      { key:'totalSolarArray',    label:'Total Solar Array',       type:'text',     def:'12,000 W' }
+    ],
+    bom:[
+      { component:'Solar Panels', specification:'600W Mono PERC',           quantity:20, unitPrice:85000,   costGroup:'equipment' },
+      { component:'Inverter',     specification:'10kVA Hybrid Inverter',    quantity:1,  unitPrice:950000,  costGroup:'equipment' },
+      { component:'Battery',      specification:'48V 400Ah Lithium',        quantity:1,  unitPrice:2800000, costGroup:'equipment' },
+      { component:'Protection',   specification:'Heavy Protection System',  quantity:1,  unitPrice:350000,  costGroup:'protection' },
+      { component:'Installation', specification:'Heavy Installation',       quantity:1,  unitPrice:500000,  costGroup:'installation' },
+      { component:'Logistics',    specification:'Lagos Logistics - Heavy',  quantity:1,  unitPrice:200000,  costGroup:'logistics' }
+    ],
+    components:[
+      { component:'Solar Panels', specification:'600W Mono',              quantity:'20', notes:'' },
+      { component:'Inverter',     specification:'10kVA Hybrid Inverter',  quantity:'1',  notes:'' },
+      { component:'Battery',      specification:'48V 400Ah Lithium',      quantity:'1',  notes:'' },
+      { component:'Protection',   specification:'Heavy Protection System',quantity:'1',  notes:'' },
+      { component:'Installation', specification:'Heavy Installation',     quantity:'1',  notes:'' },
+      { component:'Logistics',    specification:'Lagos Logistics - Heavy',quantity:'1',  notes:'' }
+    ]
+  },
+  industrial: {
+    id:'industrial', name:'Industrial', icon:'🏭', tagline:'Industrial-scale system',
+    description:'Industrial-scale solar solution for factories, plants and heavy operations.',
+    fields:[
+      { key:'setupName',          label:'Setup Name',              type:'text',     def:'Industrial Solar Setup' },
+      { key:'description',        label:'Description',             type:'textarea', def:'Industrial configuration for factories, plants and heavy-duty operations.' },
+      { key:'actualLoadW',        label:'Actual Required Load (W)',type:'number',   def:'' },
+      { key:'surgeLoadCapacityW', label:'Surge Load Capacity (W)', type:'number',   def:'75000' },
+      { key:'systemVoltage',      label:'System Voltage',          type:'text',     def:'48 V' },
+      { key:'backupHours',        label:'Backup Hours',            type:'text',     def:'12 hours' },
+      { key:'panelCount600w',     label:'Panel Count (600W)',      type:'number',   def:'80' },
+      { key:'totalSolarArray',    label:'Total Solar Array',       type:'text',     def:'48,000 W' }
+    ],
+    bom:[
+      { component:'Solar Panels', specification:'600W Mono PERC',                  quantity:80, unitPrice:85000,   costGroup:'equipment' },
+      { component:'Inverter',     specification:'50kVA Three-Phase Inverter',      quantity:1,  unitPrice:4500000, costGroup:'equipment' },
+      { component:'Battery',      specification:'48V 1500Ah Lithium',              quantity:2,  unitPrice:5500000, costGroup:'equipment' },
+      { component:'Protection',   specification:'Industrial Protection System',    quantity:1,  unitPrice:1500000, costGroup:'protection' },
+      { component:'Installation', specification:'Industrial Installation',         quantity:1,  unitPrice:2000000, costGroup:'installation' },
+      { component:'Logistics',    specification:'Nationwide Logistics - Industrial',quantity:1, unitPrice:800000,  costGroup:'logistics' }
+    ],
+    components:[
+      { component:'Solar Panels', specification:'600W Mono',                       quantity:'80', notes:'' },
+      { component:'Inverter',     specification:'50kVA Three-Phase Inverter',      quantity:'1',  notes:'' },
+      { component:'Battery',      specification:'48V 1500Ah Lithium',              quantity:'2',  notes:'' },
+      { component:'Protection',   specification:'Industrial Protection System',    quantity:'1',  notes:'' },
+      { component:'Installation', specification:'Industrial Installation',         quantity:'1',  notes:'' },
+      { component:'Logistics',    specification:'Nationwide Logistics - Industrial',quantity:'1', notes:'' }
+    ]
+  }
+};
+
+/* -------------------------------------------------------------------------
+   3) QUOTATION INFO FIELDS — customer info removed
+   ------------------------------------------------------------------------- */
+const INFO_FIELDS = [
+  { key:'quotationNumber', label:'Quotation Number', type:'text', def:()=>genQuoteNumber() },
+  { key:'date',            label:'Date',             type:'date', def:()=>todayISO() },
+  { key:'validUntil',      label:'Valid Until',      type:'date', def:()=>addDaysISO(14) },
+  { key:'preparedBy',      label:'Prepared By',      type:'text', def:'' },
+  { key:'reference',       label:'Reference / Project', type:'text', def:'' },
+  { key:'notes',           label:'Notes',            type:'textarea', def:'' }
+];
+
+/* -------------------------------------------------------------------------
+   4) DEFAULT SETTINGS
+   ------------------------------------------------------------------------- */
+const DEFAULT_SETTINGS = {
+  companyName:'SolarGrid Energy Solutions',
+  companyAddress:'12 Adeola Odeku Street, Victoria Island, Lagos, Nigeria',
+  phone:'+234 801 234 5678',
+  email:'sales@solargrid.ng',
+  website:'www.solargrid.ng',
+  whatsapp:'+234 801 234 5678',
+  regNumber:'RC 1234567',
+  tin:'TIN 12345678-0001',
+  logoDataUrl:'',
+  defaultVat:7.5,
+  validityDays:14,
+  terms:'Payment: 70% on acceptance, 30% on delivery.\nDelivery: 4–6 weeks after payment confirmation.\nWarranty: Panels 25 years, Inverter 5 years, Batteries 10 years.\nQuotation validity: 14 days from date of issue.\nPrices are subject to change without prior notice.'
+};
+
+/* -------------------------------------------------------------------------
+   5) STORAGE ADAPTER
+   ------------------------------------------------------------------------- */
+const Storage = {
+  KEYS:{ QUOTES:'sq_quotations', SETTINGS:'sq_settings' },
+  getQuotes(){ try{ return JSON.parse(localStorage.getItem(this.KEYS.QUOTES)) || []; }catch(e){ return []; } },
+  setQuotes(list){ localStorage.setItem(this.KEYS.QUOTES, JSON.stringify(list)); },
+  getSettings(){ try{ return Object.assign({}, DEFAULT_SETTINGS, JSON.parse(localStorage.getItem(this.KEYS.SETTINGS)) || {}); }catch(e){ return {...DEFAULT_SETTINGS}; } },
+  setSettings(s){ localStorage.setItem(this.KEYS.SETTINGS, JSON.stringify(s)); }
+};
+
+/* -------------------------------------------------------------------------
+   6) HELPERS
+   ------------------------------------------------------------------------- */
+const $  = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+const uid = () => Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4);
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function addDaysISO(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function genQuoteNumber(){ const y=new Date().getFullYear(); const n=String(Math.floor(Math.random()*9000)+1000); return `SQ-${y}-${n}`; }
+function fmtNaira(n){ const v=Number(n)||0; return '₦'+v.toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtNairaShort(n){ const v=Number(n)||0; return '₦'+v.toLocaleString('en-NG',{maximumFractionDigits:0}); }
+function fmtW(w){ const v=Number(w)||0; return v.toLocaleString('en-NG')+' W'; }
+function fmtDate(d){ if(!d) return ''; const dt=new Date(d); if(isNaN(dt)) return d; return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg, type=''){ const el=$('#toast'); el.textContent=msg; el.className='toast '+type; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>{el.hidden=true;},2600); }
+
+/* -------------------------------------------------------------------------
+   7) STATE
+   ------------------------------------------------------------------------- */
+const state = {
+  settings: Storage.getSettings(),
+  quotes: Storage.getQuotes(),
+  current: null,
+  view: 'dashboard'
+};
+
+/* -------------------------------------------------------------------------
+   8) QUOTATION MODEL
+   ------------------------------------------------------------------------- */
+function buildBlankQuote(configId){
+  const cfg = CONFIGURATIONS[configId];
+  if(!cfg) throw new Error('Unknown configuration: '+configId);
+  const info = {};
+  INFO_FIELDS.forEach(f => info[f.key] = typeof f.def === 'function' ? f.def() : f.def);
+  const system = {};
+  cfg.fields.forEach(f => system[f.key] = f.def);
+  const bom = cfg.bom.map(b => ({ id:uid(), ...b }));
+  const components = cfg.components.map(c => ({ id:uid(), ...c }));
+  return {
+    id: uid(), status:'draft', config: configId,
+    createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(),
+    info, system, bom, components,
+    vatPercent: Number(state.settings.defaultVat) || 7.5
+  };
+}
+
+/* -------------------------------------------------------------------------
+   9) CALCULATIONS
+   ------------------------------------------------------------------------- */
+function recalcTotals(q){
+  const groups = { equipment:0, protection:0, installation:0, logistics:0, other:0 };
+  let subtotal = 0;
+  (q.bom || []).forEach(item => {
+    const qty  = Math.max(0, Number(item.quantity)  || 0);
+    const unit = Math.max(0, Number(item.unitPrice) || 0);
+    const line = qty * unit;
+    subtotal += line;
+    const g = (item.costGroup || 'equipment').toLowerCase();
+    if(groups[g] !== undefined) groups[g] += line; else groups.other += line;
+  });
+  const vatPct = Math.max(0, Number(q.vatPercent) || 0);
+  const vatAmount = subtotal * (vatPct/100);
+  const total = subtotal + vatAmount;
+  return { ...groups, subtotal, vatPercent:vatPct, vatAmount, total };
+}
+
+/* -------------------------------------------------------------------------
+   10) LOAD CHECK — never modifies limits
+   ------------------------------------------------------------------------- */
+function checkActualLoad(q){
+  const limits = FIXED_LOAD_LIMITS[q.config];
+  const actual = Number(q.system?.actualLoadW);
+  if(!limits || !actual || actual <= 0) return { status:'none' };
+  if(actual < limits.minLoadW) return { status:'below', actual, ...limits };
+  if(actual > limits.maxLoadW) return { status:'above', actual, ...limits };
+  return { status:'within', actual, ...limits };
+}
+
+/* -------------------------------------------------------------------------
+   11) DASHBOARD RENDER
+   ------------------------------------------------------------------------- */
+function renderDashboard(){
+  const quotes = state.quotes;
+  const drafts     = quotes.filter(q => q.status === 'draft').length;
+  const completed  = quotes.filter(q => q.status === 'completed').length;
+  const downloaded = quotes.filter(q => q.status === 'downloaded').length;
+  const totalValue = quotes.reduce((s,q) => s + recalcTotals(q).total, 0);
+
+  $('#statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Quotations</div><div class="stat-value">${quotes.length}</div><div class="stat-sub">All saved quotations</div></div>
+    <div class="stat-card draft"><div class="stat-label">Drafts</div><div class="stat-value">${drafts}</div><div class="stat-sub">Awaiting completion</div></div>
+    <div class="stat-card completed"><div class="stat-label">Completed</div><div class="stat-value">${completed}</div><div class="stat-sub">Ready to send</div></div>
+    <div class="stat-card downloaded"><div class="stat-label">Downloaded</div><div class="stat-value">${downloaded}</div><div class="stat-sub">PDFs issued</div></div>
+    <div class="stat-card value"><div class="stat-label">Pipeline Value</div><div class="stat-value">${fmtNairaShort(totalValue)}</div><div class="stat-sub">Sum of all totals</div></div>
+  `;
+
+  const q = ($('#searchInput').value || '').toLowerCase().trim();
+  const filter = $('#statusFilter').value;
+
+  const list = quotes
+    .filter(x => filter === 'all' || x.status === filter)
+    .filter(x => {
+      if(!q) return true;
+      const hay = [x.info?.quotationNumber, x.info?.reference, x.config].join(' ').toLowerCase();
+      return hay.includes(q);
+    })
+    .sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
+
+  const tbody = $('#quotesBody');
+  if(!list.length){
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">No quotations yet. Click “Create New Quotation” to begin.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(item => {
+    const totals = recalcTotals(item);
+    const cfg = CONFIGURATIONS[item.config] || { name:item.config, id:'' };
+    const st = item.status === 'downloaded' || item.status === 'completed' ? 'ok' : 'warn';
+    const stLabel = item.status === 'downloaded' ? 'Downloaded' : item.status === 'completed' ? 'Completed' : 'Draft';
+    return `
+      <tr>
+        <td><strong>${esc(item.info?.quotationNumber || '—')}</strong></td>
+        <td>${esc(item.info?.reference || '—')}</td>
+        <td><span class="badge ${cfg.id}">${esc(cfg.name)}</span></td>
+        <td>${esc(fmtDate(item.info?.date))}</td>
+        <td class="right mono">${fmtNaira(totals.total)}</td>
+        <td><span class="status ${st}">${stLabel}</span></td>
+        <td class="right actions">
+          <button class="icon-btn" data-act="open"      data-id="${item.id}" title="Open">✎</button>
+          <button class="icon-btn" data-act="duplicate" data-id="${item.id}" title="Duplicate">⧉</button>
+          <button class="icon-btn" data-act="pdf"       data-id="${item.id}" title="Download PDF">⬇</button>
+          <button class="icon-btn danger" data-act="delete" data-id="${item.id}" title="Delete">🗑</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* -------------------------------------------------------------------------
+   12) EDITOR RENDER
+   ------------------------------------------------------------------------- */
+function renderEditor(){
+  const q = state.current;
+  if(!q) return;
+  const cfg = CONFIGURATIONS[q.config];
+
+  $('#editorTitle').textContent = q.info?.quotationNumber ? `Quotation ${q.info.quotationNumber}` : 'New Quotation';
+  const badge = $('#editorConfigBadge');
+  badge.textContent = cfg.name;
+  badge.className = 'badge ' + cfg.id;
+  $('#systemConfigName').textContent = `${cfg.name} — ${cfg.tagline}`;
+
+  renderSystemFields();
+  renderBom();
+  renderComponents();
+  $('#vatInput').value = q.vatPercent;
+  updateTotals();
+}
+
+function renderSystemFields(){
+  const q = state.current;
+  const cfg = CONFIGURATIONS[q.config];
+  const limits = FIXED_LOAD_LIMITS[q.config];
+
+  const limitsHtml = `
+    <div class="limits-block" aria-label="Fixed load limits (read-only)">
+      <div class="limits-icon">🔒</div>
+      <div class="limits-text">
+        <strong>Fixed Load Limits — ${esc(cfg.name)} Configuration</strong>
+        <span>These limits are defined by the ${esc(cfg.name)} configuration and cannot be edited or recalculated.</span>
+      </div>
+      <div class="limits-values">
+        <div class="limit-pill"><span>Minimum Load</span><strong>${fmtW(limits.minLoadW)}</strong></div>
+        <div class="limit-pill"><span>Maximum Load</span><strong>${fmtW(limits.maxLoadW)}</strong></div>
+      </div>
+    </div>
+  `;
+
+  const fieldsHtml = cfg.fields.map(f => {
+    if(f.key === 'actualLoadW'){
+      return `
+        <div class="field full actual-load-wrap">
+          <label>${esc(f.label)}</label>
+          <input class="input" type="number" min="0" step="1" data-scope="system" data-key="actualLoadW"
+                 value="${esc(q.system.actualLoadW ?? '')}"
+                 placeholder="Enter the required load in Watts" />
+          <div class="load-warning" id="loadWarning" role="alert"></div>
+        </div>
+      `;
+    }
+    if(f.type === 'textarea'){
+      return `
+        <div class="field ${f.full ? 'full' : ''}">
+          <label>${esc(f.label)}</label>
+          <textarea class="input" data-scope="system" data-key="${f.key}" rows="2">${esc(q.system[f.key] ?? '')}</textarea>
+        </div>
+      `;
+    }
+    return `
+      <div class="field ${f.full ? 'full' : ''}">
+        <label>${esc(f.label)}</label>
+        <input class="input" type="${f.type}" data-scope="system" data-key="${f.key}" value="${esc(q.system[f.key] ?? '')}" />
+      </div>
+    `;
+  }).join('');
+
+  $('#systemFields').innerHTML = limitsHtml + `<div class="form-grid">${fieldsHtml}</div>`;
+  updateLoadWarning();
+}
+
+function updateLoadWarning(){
+  const warn = $('#loadWarning');
+  if(!warn) return;
+  const q = state.current;
+  const result = checkActualLoad(q);
+  warn.className = 'load-warning';
+  warn.style.background = '';
+  warn.style.borderColor = '';
+  warn.style.color = '';
+
+  if(result.status === 'none'){ warn.textContent = ''; return; }
+
+  if(result.status === 'below'){
+    warn.classList.add('show','below');
+    warn.innerHTML = `<strong>⚠ Below minimum load.</strong> The required load (${fmtW(result.actual)}) is below the ${esc(q.config)} configuration minimum of ${fmtW(result.minLoadW)}. Consider a lower-tier configuration. The configuration limit itself has <em>not</em> been changed.`;
+  } else if(result.status === 'above'){
+    warn.classList.add('show','above');
+    warn.innerHTML = `<strong>⚠ Above maximum load.</strong> The required load (${fmtW(result.actual)}) exceeds the ${esc(q.config)} configuration maximum of ${fmtW(result.maxLoadW)}. Consider a higher-tier configuration. The configuration limit itself has <em>not</em> been changed.`;
+  } else {
+    warn.classList.add('show');
+    warn.style.background = '#e8f7ee';
+    warn.style.borderColor = '#bbf7d0';
+    warn.style.color = '#15803d';
+    warn.innerHTML = `<strong>✓ Within range.</strong> Required load (${fmtW(result.actual)}) is within the configuration range of ${fmtW(result.minLoadW)} – ${fmtW(result.maxLoadW)}.`;
+  }
+}
+
+function renderBom(){
+  const q = state.current;
+  const tbody = $('#bomBody');
+  if(!q.bom.length){
+    tbody.innerHTML = `<tr><td colspan="8" class="empty">No components yet. Click “Add Component”.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = q.bom.map((item, i) => `
+    <tr data-id="${item.id}">
+      <td class="idx">${i+1}</td>
+      <td><input class="input sm" data-bom="component"     value="${esc(item.component)}" /></td>
+      <td><input class="input sm" data-bom="specification" value="${esc(item.specification)}" /></td>
+      <td>
+        <select class="input sm" data-bom="costGroup">
+          <option value="equipment"    ${item.costGroup==='equipment'?'selected':''}>Equipment Cost</option>
+          <option value="protection"   ${item.costGroup==='protection'?'selected':''}>Protection Devices</option>
+          <option value="installation" ${item.costGroup==='installation'?'selected':''}>Installation Cost</option>
+          <option value="logistics"    ${item.costGroup==='logistics'?'selected':''}>Logistics</option>
+          <option value="other"        ${item.costGroup==='other'?'selected':''}>Other</option>
+        </select>
+      </td>
+      <td class="right"><input class="input sm mono" type="number" min="0" step="1"   data-bom="quantity"  value="${esc(item.quantity)}" /></td>
+      <td class="right"><input class="input sm mono" type="number" min="0" step="100" data-bom="unitPrice" value="${esc(item.unitPrice)}" /></td>
+      <td class="right mono">${fmtNaira((Number(item.quantity)||0) * (Number(item.unitPrice)||0))}</td>
+      <td class="right"><button class="icon-btn danger" data-act="bom-del" data-id="${item.id}" title="Remove">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderComponents(){
+  const q = state.current;
+  const tbody = $('#componentsBody');
+  if(!q.components.length){
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">No components yet. Click “Add Component”.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = q.components.map(item => `
+    <tr data-id="${item.id}">
+      <td><input class="input sm" data-comp="component"     value="${esc(item.component)}" /></td>
+      <td><input class="input sm" data-comp="specification" value="${esc(item.specification)}" /></td>
+      <td class="right"><input class="input sm mono" type="text" data-comp="quantity" value="${esc(item.quantity)}" /></td>
+      <td><input class="input sm" data-comp="notes" value="${esc(item.notes)}" placeholder="—" /></td>
+      <td class="right"><button class="icon-btn danger" data-act="comp-del" data-id="${item.id}" title="Remove">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function updateTotals(){
+  const q = state.current;
+  if(!q) return;
+  const t = recalcTotals(q);
+  $('#sumEquipment').textContent    = fmtNaira(t.equipment);
+  $('#sumProtection').textContent   = fmtNaira(t.protection);
+  $('#sumInstallation').textContent = fmtNaira(t.installation);
+  $('#sumLogistics').textContent    = fmtNaira(t.logistics);
+  if(t.other > 0){ $('#rowOther').hidden = false; $('#sumOther').textContent = fmtNaira(t.other); }
+  else { $('#rowOther').hidden = true; }
+  $('#sumSubtotal').textContent = fmtNaira(t.subtotal);
+  $('#sumVat').textContent      = fmtNaira(t.vatAmount);
+  $('#sumTotal').textContent    = fmtNaira(t.total);
+
+  $$('#bomBody tr[data-id]').forEach(tr => {
+    const item = q.bom.find(x => x.id === tr.dataset.id);
+    if(!item) return;
+    const cell = tr.querySelector('td:nth-child(7)');
+    if(cell) cell.textContent = fmtNaira((Number(item.quantity)||0) * (Number(item.unitPrice)||0));
+  });
+}
+
+/* -------------------------------------------------------------------------
+   13) VALIDATION — customer fields removed
+   ------------------------------------------------------------------------- */
+function validateQuote(q){
+  const errors = [];
+  if(!q.info.quotationNumber || !q.info.quotationNumber.trim()) errors.push('Quotation number is required.');
+  if(!q.info.date) errors.push('Quotation date is required.');
+  const vat = Number(q.vatPercent);
+  if(isNaN(vat) || vat < 0 || vat > 100) errors.push('VAT percentage must be between 0 and 100.');
+  q.bom.forEach((item, i) => {
+    const qty  = Number(item.quantity);
+    const unit = Number(item.unitPrice);
+    if(isNaN(qty) || qty < 0)   errors.push(`BOM row ${i+1}: quantity must be 0 or greater.`);
+    if(isNaN(unit) || unit < 0) errors.push(`BOM row ${i+1}: unit price must be 0 or greater.`);
+    if(!item.component || !item.component.trim()) errors.push(`BOM row ${i+1}: component name is required.`);
+  });
+  if(!q.bom.length) errors.push('At least one BOM item is required.');
+  const actual = Number(q.system?.actualLoadW);
+  if(q.system?.actualLoadW !== '' && (isNaN(actual) || actual < 0))
+    errors.push('Actual required load must be a positive number.');
+  return errors;
+}
+
+function showErrors(list){
+  const box = $('#errorBox');
+  if(!list.length){ box.hidden = true; box.innerHTML = ''; return; }
+  box.hidden = false;
+  box.innerHTML = `<strong>Please fix the following before generating the PDF:</strong><ul>${list.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`;
+  box.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+/* -------------------------------------------------------------------------
+   14) NAVIGATION
+   ------------------------------------------------------------------------- */
+function setView(v){
+  state.view = v;
+  $$('.view').forEach(el => el.classList.add('hidden'));
+  $('#view-' + v).classList.remove('hidden');
+  $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  if(v === 'dashboard') renderDashboard();
+  if(v === 'editor')    renderEditor();
+  if(v === 'settings')  renderSettings();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* -------------------------------------------------------------------------
+   15) SETTINGS
+   ------------------------------------------------------------------------- */
+const SETTINGS_FIELDS = [
+  { key:'companyName',    label:'Company Name' },
+  { key:'companyAddress', label:'Company Address', full:true },
+  { key:'phone',          label:'Phone Number' },
+  { key:'email',          label:'Email' },
+  { key:'website',        label:'Website' },
+  { key:'whatsapp',       label:'WhatsApp Number' },
+  { key:'regNumber',      label:'Registration Number' },
+  { key:'tin',            label:'TIN' },
+  { key:'defaultVat',     label:'Default VAT (%)', type:'number' },
+  { key:'validityDays',   label:'Default Validity (days)', type:'number' },
+  { key:'terms',          label:'Terms & Conditions', type:'textarea', full:true }
+];
+
+function renderSettings(){
+  const s = state.settings;
+  $('#settingsFields').innerHTML = SETTINGS_FIELDS.map(f => {
+    const val = s[f.key] ?? '';
+    if(f.type === 'textarea'){
+      return `<div class="field full"><label>${esc(f.label)}</label>
+        <textarea class="input" data-setting="${f.key}" rows="6">${esc(val)}</textarea></div>`;
+    }
+    return `<div class="field ${f.full?'full':''}">
+      <label>${esc(f.label)}</label>
+      <input class="input" type="${f.type||'text'}" data-setting="${f.key}" value="${esc(val)}" />
+    </div>`;
+  }).join('');
+
+  const prev = $('#logoPreview');
+  if(s.logoDataUrl) prev.innerHTML = `<img src="${s.logoDataUrl}" alt="logo" />`;
+  else prev.textContent = 'No logo';
+
+  $('#brandName').textContent = s.companyName || 'SolarQuote Pro';
+  const logoEl = $('#brandLogo');
+  if(s.logoDataUrl) logoEl.innerHTML = `<img src="${s.logoDataUrl}" alt="logo" />`;
+  else logoEl.innerHTML = (s.companyName || 'S').trim().charAt(0).toUpperCase();
+}
+
+function saveSettingsFromForm(){
+  const next = { ...state.settings };
+  $$('[data-setting]').forEach(el => {
+    const k = el.dataset.setting;
+    let v = el.value;
+    if(el.type === 'number') v = Number(v) || 0;
+    next[k] = v;
+  });
+  state.settings = next;
+  Storage.setSettings(next);
+  renderSettings();
+  toast('Settings saved', 'success');
+}
+
+/* -------------------------------------------------------------------------
+   16) QUOTATION ACTIONS
+   ------------------------------------------------------------------------- */
+function saveQuote(q){
+  q.updatedAt = new Date().toISOString();
+  const idx = state.quotes.findIndex(x => x.id === q.id);
+  if(idx >= 0) state.quotes[idx] = q;
+  else state.quotes.unshift(q);
+  Storage.setQuotes(state.quotes);
+}
+function deleteQuote(id){
+  if(!confirm('Delete this quotation permanently?')) return;
+  state.quotes = state.quotes.filter(q => q.id !== id);
+  Storage.setQuotes(state.quotes);
+  renderDashboard();
+  toast('Quotation deleted');
+}
+function duplicateQuote(id){
+  const src = state.quotes.find(q => q.id === id);
+  if(!src) return;
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = uid();
+  copy.status = 'draft';
+  copy.createdAt = copy.updatedAt = new Date().toISOString();
+  copy.info.quotationNumber = genQuoteNumber();
+  copy.info.date = todayISO();
+  copy.info.validUntil = addDaysISO(state.settings.validityDays || 14);
+  copy.bom = copy.bom.map(b => ({ ...b, id:uid() }));
+  copy.components = copy.components.map(c => ({ ...c, id:uid() }));
+  state.quotes.unshift(copy);
+  Storage.setQuotes(state.quotes);
+  renderDashboard();
+  toast('Quotation duplicated', 'success');
+}
+
+/* -------------------------------------------------------------------------
+   17) PDF GENERATION — customer block removed, info bar added
+   ------------------------------------------------------------------------- */
+function ensurePdfLibs(){
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    toast('PDF library not loaded. Check your internet connection.', 'error');
+    return false;
+  }
+  return true;
+}
+
+function sectionTitle(doc, text, x, y, pw){
+  doc.setDrawColor(15, 32, 56);
+  doc.setLineWidth(1.5);
+  doc.line(x, y+6, x+pw-x*2, y+6);
+  doc.setLineWidth(.4);
+  doc.setFillColor(245, 158, 11);
+  doc.rect(x, y-4, 4, 12, 'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10.5);
+  doc.setTextColor(15, 32, 56);
+  doc.text(text.toUpperCase(), x+12, y+5);
+  return y + 22;
+}
+
+function buildPdf(q){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const settings = state.settings;
+  const cfg = CONFIGURATIONS[q.config];
+  const limits = FIXED_LOAD_LIMITS[q.config];
+  const totals = recalcTotals(q);
+
+  const PW = doc.internal.pageSize.getWidth();
+  const PH = doc.internal.pageSize.getHeight();
+  const M = 40;
+  let y = 0;
+
+  const NAVY   = [15, 32, 56];
+  const ACCENT = [245, 158, 11];
+  const MUTED  = [104, 120, 142];
+  const LINE   = [228, 233, 241];
+
+  // Header band
+  doc.setFillColor(...NAVY);
+  doc.rect(0, 0, PW, 92, 'F');
+
+  if(settings.logoDataUrl){
+    try{ doc.addImage(settings.logoDataUrl, 'PNG', M, 22, 48, 48); }
+    catch(_){}
+  } else {
+    doc.setFillColor(...ACCENT);
+    doc.roundedRect(M, 22, 48, 48, 8, 8, 'F');
+    doc.setTextColor(...NAVY);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(22);
+    doc.text((settings.companyName || 'S').charAt(0).toUpperCase(), M+24, 53, { align:'center' });
+  }
+
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(14);
+  doc.text(settings.companyName || 'Solar Company', M+62, 40);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(200, 210, 225);
+  const companyLines = [
+    settings.companyAddress,
+    [settings.phone, settings.email].filter(Boolean).join('  •  '),
+    [settings.website, settings.whatsapp ? 'WhatsApp: '+settings.whatsapp : ''].filter(Boolean).join('  •  '),
+    [settings.regNumber, settings.tin].filter(Boolean).join('  •  ')
+  ].filter(Boolean);
+  companyLines.forEach((l, i) => doc.text(l, M+62, 55 + i*11));
+
+  doc.setTextColor(...ACCENT);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9);
+  doc.text('SOLAR QUOTATION', PW-M, 40, { align:'right' });
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(13);
+  doc.text(q.info.quotationNumber || '', PW-M, 58, { align:'right' });
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(200,210,225);
+  doc.text('Date: ' + fmtDate(q.info.date), PW-M, 73, { align:'right' });
+  if(q.info.validUntil) doc.text('Valid Until: ' + fmtDate(q.info.validUntil), PW-M, 85, { align:'right' });
+
+  y = 118;
+
+  // Info bar (reference, prepared by, configuration)
+  doc.setFillColor(247, 249, 252);
+  doc.roundedRect(M, y, PW - M*2, 36, 6, 6, 'F');
+  doc.setDrawColor(...LINE);
+  doc.roundedRect(M, y, PW - M*2, 36, 6, 6, 'S');
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...MUTED);
+  doc.text('Reference:', M+12, y+15);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(40,50,65);
+  doc.text(q.info.reference || '—', M+70, y+15);
+
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(...MUTED);
+  doc.text('Prepared By:', M+12, y+29);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(40,50,65);
+  doc.text(q.info.preparedBy || '—', M+70, y+29);
+
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(...MUTED);
+  doc.text('Configuration:', PW/2 + 20, y+15);
+  doc.setFont('helvetica','bold');
+  doc.setTextColor(40,50,65);
+  doc.text(cfg.name, PW/2 + 105, y+15);
+
+  y += 52;
+
+  // FIXED LIMITS band
+  doc.setFillColor(240, 245, 255);
+  doc.roundedRect(M, y, PW - M*2, 62, 6, 6, 'F');
+  doc.setDrawColor(207, 224, 251);
+  doc.roundedRect(M, y, PW - M*2, 62, 6, 6, 'S');
+
+  doc.setTextColor(...NAVY);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9.5);
+  doc.text('FIXED LOAD LIMITS — ' + cfg.name.toUpperCase() + ' CONFIGURATION', M+14, y+18);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...MUTED);
+  doc.text('Defined by the configuration — not editable, not recalculated.', M+14, y+31);
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(...NAVY);
+  const half = (PW - M*2) / 2;
+  doc.text('Minimum Load:', M+14, y+50);
+  doc.text(fmtW(limits.minLoadW), M+110, y+50);
+  doc.text('Maximum Load:', M+half+6, y+50);
+  doc.text(fmtW(limits.maxLoadW), M+half+110, y+50);
+
+  y += 78;
+
+  if(q.system.actualLoadW !== '' && q.system.actualLoadW !== undefined && q.system.actualLoadW !== null){
+    const chk = checkActualLoad(q);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...MUTED);
+    doc.text('Actual Required Load:', M, y);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(40,50,65);
+    doc.text(fmtW(q.system.actualLoadW), M+130, y);
+
+    if(chk.status === 'below'){
+      doc.setTextColor(180, 83, 9);
+      doc.setFont('helvetica','bold');
+      doc.text('⚠ Below configuration minimum', M+240, y);
+    } else if(chk.status === 'above'){
+      doc.setTextColor(153, 27, 27);
+      doc.setFont('helvetica','bold');
+      doc.text('⚠ Above configuration maximum', M+240, y);
+    } else if(chk.status === 'within'){
+      doc.setTextColor(21, 128, 61);
+      doc.setFont('helvetica','bold');
+      doc.text('✓ Within configuration range', M+240, y);
+    }
+    y += 18;
+  }
+
+  // System config table
+  y = sectionTitle(doc, 'System Configuration', M, y, PW);
+  const sysBody = cfg.fields.filter(f => f.key !== 'actualLoadW').map(f => [f.label, String(q.system[f.key] ?? '—')]);
+  doc.autoTable({
+    startY: y,
+    margin: { left: M, right: M },
+    theme: 'grid',
+    styles: { fontSize: 9.5, cellPadding: 6, lineColor: LINE, lineWidth: .5, textColor: [40,50,65] },
+    headStyles: { fillColor: NAVY, textColor: 255, fontStyle: 'bold', fontSize: 9 },
+    alternateRowStyles: { fillColor: [247, 250, 253] },
+    head: [['Parameter', 'Value']],
+    body: sysBody,
+    columnStyles: { 0: { cellWidth: 220, fontStyle:'bold' }, 1: { cellWidth: 'auto' } }
+  });
+  y = doc.lastAutoTable.finalY + 22;
+
+  // Load requirements
+  y = sectionTitle(doc, 'Load Requirements', M, y, PW);
+  doc.autoTable({
+    startY: y,
+    margin: { left: M, right: M },
+    theme: 'grid',
+    styles: { fontSize: 9.5, cellPadding: 6, lineColor: LINE, lineWidth: .5, textColor: [40,50,65] },
+    headStyles: { fillColor: NAVY, textColor: 255, fontStyle:'bold', fontSize: 9 },
+    head: [['Description', 'Value']],
+    body: [
+      ['Minimum Load (fixed)', fmtW(limits.minLoadW)],
+      ['Maximum Load (fixed)', fmtW(limits.maxLoadW)],
+      ['Actual Required Load', q.system.actualLoadW ? fmtW(q.system.actualLoadW) : '—'],
+      ['Surge Load Capacity', q.system.surgeLoadCapacityW ? fmtW(q.system.surgeLoadCapacityW) : '—']
+    ],
+    columnStyles: { 0: { cellWidth: 220, fontStyle:'bold' } }
+  });
+  y = doc.lastAutoTable.finalY + 22;
+
+  // BOM
+  y = sectionTitle(doc, 'Bill of Materials', M, y, PW);
+  doc.autoTable({
+    startY: y,
+    margin: { left: M, right: M },
+    theme: 'grid',
+    styles: { fontSize: 9, cellPadding: 6, lineColor: LINE, lineWidth: .5, textColor: [40,50,65] },
+    headStyles: { fillColor: NAVY, textColor: 255, fontStyle:'bold', fontSize: 9 },
+    alternateRowStyles: { fillColor: [247, 250, 253] },
+    head: [['#', 'Component', 'Specification', 'Qty', 'Unit Price', 'Total']],
+    body: q.bom.map((b, i) => [
+      String(i+1), b.component, b.specification, String(b.quantity),
+      fmtNaira(b.unitPrice),
+      fmtNaira((Number(b.quantity)||0) * (Number(b.unitPrice)||0))
+    ]),
+    columnStyles: {
+      0: { cellWidth: 22, halign:'center' },
+      1: { cellWidth: 110, fontStyle:'bold' },
+      2: { cellWidth: 'auto' },
+      3: { cellWidth: 40, halign:'right' },
+      4: { cellWidth: 85, halign:'right' },
+      5: { cellWidth: 90, halign:'right', fontStyle:'bold' }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 22;
+
+  // Components list
+  if(q.components.length){
+    if(y > PH - 220){ doc.addPage(); y = 60; }
+    y = sectionTitle(doc, 'Components List', M, y, PW);
+    doc.autoTable({
+      startY: y,
+      margin: { left: M, right: M },
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 6, lineColor: LINE, lineWidth: .5, textColor: [40,50,65] },
+      headStyles: { fillColor: NAVY, textColor: 255, fontStyle:'bold', fontSize: 9 },
+      head: [['Component', 'Specification', 'Quantity', 'Notes']],
+      body: q.components.map(c => [c.component, c.specification, c.quantity, c.notes || '—']),
+      columnStyles: {
+        0: { cellWidth: 110, fontStyle:'bold' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 70, halign:'right' },
+        3: { cellWidth: 150 }
+      }
+    });
+    y = doc.lastAutoTable.finalY + 22;
+  }
+
+  // Cost breakdown
+  if(y > PH - 220){ doc.addPage(); y = 60; }
+  y = sectionTitle(doc, 'Cost Breakdown', M, y, PW);
+  const otherRow = totals.other > 0;
+  doc.autoTable({
+    startY: y,
+    margin: { left: M, right: M },
+    theme: 'grid',
+    styles: { fontSize: 9.5, cellPadding: 7, lineColor: LINE, lineWidth: .5, textColor: [40,50,65] },
+    headStyles: { fillColor: NAVY, textColor: 255, fontStyle:'bold', fontSize: 9 },
+    body: [
+      ['Equipment Cost',              fmtNaira(totals.equipment)],
+      ['Protection Devices',          fmtNaira(totals.protection)],
+      ['Installation Cost',           fmtNaira(totals.installation)],
+      ['Logistics',                   fmtNaira(totals.logistics)],
+      ...(otherRow ? [['Other Charges', fmtNaira(totals.other)]] : []),
+      ['Subtotal',                    fmtNaira(totals.subtotal)],
+      [`VAT (${totals.vatPercent}%)`, fmtNaira(totals.vatAmount)],
+      ['Grand Total',                 fmtNaira(totals.total)]
+    ],
+    columnStyles: {
+      0: { cellWidth: 'auto', fontStyle:'bold' },
+      1: { cellWidth: 160, halign:'right', fontStyle:'bold' }
+    },
+    didParseCell: (data) => {
+      const last = data.row.index === (otherRow ? 7 : 6);
+      const subIdx = otherRow ? 5 : 4;
+      if(last){
+        data.cell.styles.fillColor = NAVY;
+        data.cell.styles.textColor = [255,255,255];
+        data.cell.styles.fontSize = 11;
+        if(data.column.index === 1) data.cell.styles.textColor = [251, 191, 36];
+      } else if(data.row.index === subIdx){
+        data.cell.styles.fillColor = [240, 245, 255];
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 22;
+
+  // Terms
+  if(y > PH - 200){ doc.addPage(); y = 60; }
+  y = sectionTitle(doc, 'Terms & Notes', M, y, PW);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(70, 85, 107);
+  const terms = (q.info.notes ? q.info.notes + '\n\n' : '') + (settings.terms || '');
+  const wrapped = doc.splitTextToSize(terms.trim() || '—', PW - M*2);
+  doc.text(wrapped, M, y);
+  y += wrapped.length * 12 + 20;
+
+  // Signature
+  if(y > PH - 140){ doc.addPage(); y = 60; }
+  doc.setDrawColor(...LINE);
+  doc.line(M, y, M+180, y);
+  doc.line(PW-M-180, y, PW-M, y);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(...NAVY);
+  doc.text('Authorized Signature', M, y+16);
+  doc.text('Customer Acceptance', PW-M-180, y+16);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...MUTED);
+  doc.text('Date: _______________', M, y+30);
+  doc.text('Date: _______________', PW-M-180, y+30);
+
+  // Footers
+  const pageCount = doc.getNumberOfPages();
+  for(let p=1; p<=pageCount; p++){
+    doc.setPage(p);
+    doc.setDrawColor(...LINE);
+    doc.line(M, PH-40, PW-M, PH-40);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...MUTED);
+    doc.text(`${settings.companyName || ''}`, M, PH-26);
+    doc.text(`${q.info.quotationNumber || ''}  •  Page ${p} of ${pageCount}`, PW-M, PH-26, { align:'right' });
+  }
+
+  return doc;
+}
+
+/* -------------------------------------------------------------------------
+   18) PREVIEW (HTML) — customer section removed, info bar added
+   ------------------------------------------------------------------------- */
+function renderPreview(q){
+  const cfg = CONFIGURATIONS[q.config];
+  const limits = FIXED_LOAD_LIMITS[q.config];
+  const totals = recalcTotals(q);
+  const s = state.settings;
+  const chk = checkActualLoad(q);
+
+  const companyBlock = s.logoDataUrl
+    ? `<div class="doc-logo"><img src="${s.logoDataUrl}" alt="logo" /></div>`
+    : `<div class="doc-logo">${esc((s.companyName||'S').charAt(0).toUpperCase())}</div>`;
+
+  return `
+  <div class="doc">
+    <div class="doc-header">
+      <div class="doc-brand">
+        ${companyBlock}
+        <div class="doc-company">
+          <h2>${esc(s.companyName || 'Solar Company')}</h2>
+          <p>${esc(s.companyAddress || '')}</p>
+          <p>${esc(s.phone || '')}${s.email ? ' • '+esc(s.email) : ''}</p>
+          <p>${esc(s.website || '')}${s.whatsapp ? ' • WhatsApp: '+esc(s.whatsapp) : ''}</p>
+          ${(s.regNumber || s.tin) ? `<p>${esc([s.regNumber, s.tin].filter(Boolean).join(' • '))}</p>` : ''}
+        </div>
+      </div>
+      <div class="doc-title">
+        <h1>SOLAR QUOTATION</h1>
+        <div class="sub">${esc(cfg.name)} Configuration</div>
+      </div>
+    </div>
+
+    <div class="doc-meta">
+      <div><span>Quotation No.</span><strong>${esc(q.info.quotationNumber || '—')}</strong></div>
+      <div><span>Date</span><strong>${esc(fmtDate(q.info.date))}</strong></div>
+      <div><span>Valid Until</span><strong>${esc(fmtDate(q.info.validUntil) || '—')}</strong></div>
+      <div><span>Prepared By</span><strong>${esc(q.info.preparedBy || '—')}</strong></div>
+      <div><span>Reference</span><strong>${esc(q.info.reference || '—')}</strong></div>
+    </div>
+
+    <div class="doc-section">
+      <h3>Fixed Load Limits — ${esc(cfg.name)}</h3>
+      <div class="fixed-limits-doc">
+        <div class="fl-cell"><span>Minimum Load</span><strong>${fmtW(limits.minLoadW)}</strong></div>
+        <div class="fl-cell"><span>Maximum Load</span><strong>${fmtW(limits.maxLoadW)}</strong></div>
+      </div>
+      <p class="muted sm-text" style="margin-top:8px">Fixed configuration limits — read-only and never recalculated.</p>
+    </div>
+
+    <div class="doc-section">
+      <h3>System Configuration</h3>
+      <div class="doc-kv" style="display:grid;grid-template-columns:1fr 1fr;gap:0 22px;">
+        ${cfg.fields.filter(f=>f.key!=='actualLoadW').map(f => `
+          <div class="row"><span>${esc(f.label)}</span><strong>${esc(q.system[f.key] || '—')}</strong></div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h3>Load Requirements</h3>
+      <table class="doc-table">
+        <thead><tr><th>Description</th><th class="r">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Minimum Load (fixed)</td><td class="r">${fmtW(limits.minLoadW)}</td></tr>
+          <tr><td>Maximum Load (fixed)</td><td class="r">${fmtW(limits.maxLoadW)}</td></tr>
+          <tr><td>Actual Required Load</td><td class="r">${q.system.actualLoadW ? fmtW(q.system.actualLoadW) : '—'}</td></tr>
+          <tr><td>Surge Load Capacity</td><td class="r">${q.system.surgeLoadCapacityW ? fmtW(q.system.surgeLoadCapacityW) : '—'}</td></tr>
+          ${chk.status === 'below' ? `<tr><td colspan="2" style="color:#92400e"><strong>⚠ Note:</strong> Actual required load is below the ${esc(cfg.name)} configuration minimum. The fixed limits have not been changed.</td></tr>` : ''}
+          ${chk.status === 'above' ? `<tr><td colspan="2" style="color:#991b1b"><strong>⚠ Note:</strong> Actual required load exceeds the ${esc(cfg.name)} configuration maximum. The fixed limits have not been changed.</td></tr>` : ''}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="doc-section">
+      <h3>Bill of Materials</h3>
+      <table class="doc-table">
+        <thead>
+          <tr><th>#</th><th>Component</th><th>Specification</th><th class="r">Qty</th><th class="r">Unit Price</th><th class="r">Total</th></tr>
+        </thead>
+        <tbody>
+          ${q.bom.map((b,i) => `
+            <tr>
+              <td>${i+1}</td>
+              <td><strong>${esc(b.component)}</strong></td>
+              <td>${esc(b.specification)}</td>
+              <td class="r">${esc(b.quantity)}</td>
+              <td class="r">${fmtNaira(b.unitPrice)}</td>
+              <td class="r"><strong>${fmtNaira((Number(b.quantity)||0) * (Number(b.unitPrice)||0))}</strong></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    ${q.components.length ? `
+    <div class="doc-section">
+      <h3>Components List</h3>
+      <table class="doc-table">
+        <thead><tr><th>Component</th><th>Specification</th><th class="r">Quantity</th><th>Notes</th></tr></thead>
+        <tbody>
+          ${q.components.map(c => `
+            <tr>
+              <td><strong>${esc(c.component)}</strong></td>
+              <td>${esc(c.specification)}</td>
+              <td class="r">${esc(c.quantity)}</td>
+              <td>${esc(c.notes || '—')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>` : ''}
+
+    <div class="doc-section">
+      <h3>Cost Breakdown</h3>
+      <div class="doc-totals">
+        <div class="row"><span>Equipment Cost</span><strong>${fmtNaira(totals.equipment)}</strong></div>
+        <div class="row"><span>Protection Devices</span><strong>${fmtNaira(totals.protection)}</strong></div>
+        <div class="row"><span>Installation Cost</span><strong>${fmtNaira(totals.installation)}</strong></div>
+        <div class="row"><span>Logistics</span><strong>${fmtNaira(totals.logistics)}</strong></div>
+        ${totals.other > 0 ? `<div class="row"><span>Other Charges</span><strong>${fmtNaira(totals.other)}</strong></div>` : ''}
+        <div class="row sub"><span>Subtotal</span><strong>${fmtNaira(totals.subtotal)}</strong></div>
+        <div class="row"><span>VAT (${totals.vatPercent}%)</span><strong>${fmtNaira(totals.vatAmount)}</strong></div>
+        <div class="row grand"><span>Grand Total</span><strong>${fmtNaira(totals.total)}</strong></div>
+      </div>
+    </div>
+
+    <div class="doc-terms">
+      <h4>Terms & Notes</h4>
+      ${q.info.notes ? `<p style="margin-bottom:8px"><strong>Notes:</strong> ${esc(q.info.notes)}</p>` : ''}
+      ${esc(s.terms || '').replace(/\n/g,'<br>')}
+    </div>
+
+    <div class="doc-sign">
+      <div class="sig-box"><strong>Authorized Signature</strong>Date: _______________</div>
+      <div class="sig-box"><strong>Customer Acceptance</strong>Date: _______________</div>
+    </div>
+
+    <div class="doc-footer">
+      ${esc(s.companyName || '')} • ${esc(s.email || '')} • ${esc(s.phone || '')}
+    </div>
+  </div>`;
+}
+
+/* -------------------------------------------------------------------------
+   19) EVENTS
+   ------------------------------------------------------------------------- */
+function handleEditorInput(e){
+  const t = e.target;
+  if(!t.matches('input, select, textarea')) return;
+  const q = state.current;
+  if(!q) return;
+
+  const scope = t.dataset.scope;
+  const key   = t.dataset.key;
+
+  if(scope === 'system' && key){
+    q.system[key] = t.value;
+    if(key === 'actualLoadW') updateLoadWarning();
+  } else if(scope === 'quote' && key === 'vatPercent'){
+    q.vatPercent = t.value;
+  } else if(t.dataset.bom){
+    const row = t.closest('tr[data-id]');
+    if(!row) return;
+    const item = q.bom.find(x => x.id === row.dataset.id);
+    if(!item) return;
+    item[t.dataset.bom] = t.value;
+    updateTotals();
+  } else if(t.dataset.comp){
+    const row = t.closest('tr[data-id]');
+    if(!row) return;
+    const item = q.components.find(x => x.id === row.dataset.id);
+    if(!item) return;
+    item[t.dataset.comp] = t.value;
+  }
+
+  const idx = state.quotes.findIndex(x => x.id === q.id);
+  if(idx >= 0){ q.updatedAt = new Date().toISOString(); state.quotes[idx] = q; Storage.setQuotes(state.quotes); }
+}
+
+function bindEvents(){
+  $('#btnNewQuotation').addEventListener('click', () => openConfigModal());
+  $('#brandBlock').addEventListener('click', () => setView('dashboard'));
+
+  $$('.nav-btn').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+  $('#searchInput').addEventListener('input', renderDashboard);
+  $('#statusFilter').addEventListener('change', renderDashboard);
+
+  $('#quotesBody').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act]');
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const act = btn.dataset.act;
+
+    if(act === 'open'){
+      const q = state.quotes.find(x => x.id === id);
+      if(!q) return;
+      state.current = q;
+      setView('editor');
+    }
+    if(act === 'duplicate') duplicateQuote(id);
+    if(act === 'delete')    deleteQuote(id);
+    if(act === 'pdf'){
+      const q = state.quotes.find(x => x.id === id);
+      if(!q) return;
+      downloadQuotePdf(q);
+    }
+  });
+
+  $('#btnCloseConfig').addEventListener('click', closeConfigModal);
+  $('#configOverlay').addEventListener('click', (e) => { if(e.target.id === 'configOverlay') closeConfigModal(); });
+  $('#configGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.config-card');
+    if(!card) return;
+    startNewQuote(card.dataset.config);
+  });
+
+  $('#btnBackToDash').addEventListener('click', () => setView('dashboard'));
+  $('#btnClearForm').addEventListener('click', clearForm);
+  $('#btnSaveDraft').addEventListener('click', saveDraftFromEditor);
+  $('#btnPreviewTop').addEventListener('click', previewPdf);
+  $('#btnDownloadTop').addEventListener('click', downloadPdfFromEditor);
+  $('#btnPreviewSide').addEventListener('click', previewPdf);
+  $('#btnDownloadSide').addEventListener('click', downloadPdfFromEditor);
+
+  $('#view-editor').addEventListener('input', handleEditorInput);
+  $('#view-editor').addEventListener('change', handleEditorInput);
+
+  $('#btnAddBom').addEventListener('click', () => {
+    state.current.bom.push({ id:uid(), component:'', specification:'', quantity:1, unitPrice:0, costGroup:'equipment' });
+    renderBom(); updateTotals();
+  });
+  $('#btnAddComponent').addEventListener('click', () => {
+    state.current.components.push({ id:uid(), component:'', specification:'', quantity:'1', notes:'' });
+    renderComponents();
+  });
+
+  $('#bomBody').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act="bom-del"]');
+    if(!btn) return;
+    state.current.bom = state.current.bom.filter(x => x.id !== btn.dataset.id);
+    renderBom(); updateTotals();
+  });
+  $('#componentsBody').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act="comp-del"]');
+    if(!btn) return;
+    state.current.components = state.current.components.filter(x => x.id !== btn.dataset.id);
+    renderComponents();
+  });
+
+  $('#btnSaveSettings').addEventListener('click', saveSettingsFromForm);
+  $('#btnResetSettings').addEventListener('click', () => {
+    if(!confirm('Reset all company settings to defaults?')) return;
+    state.settings = { ...DEFAULT_SETTINGS };
+    Storage.setSettings(state.settings);
+    renderSettings();
+    toast('Settings reset');
+  });
+  $('#btnUploadLogo').addEventListener('click', () => $('#logoInput').click());
+  $('#logoInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      state.settings.logoDataUrl = reader.result;
+      Storage.setSettings(state.settings);
+      renderSettings();
+      toast('Logo uploaded', 'success');
+    };
+    reader.readAsDataURL(file);
+  });
+  $('#btnRemoveLogo').addEventListener('click', () => {
+    state.settings.logoDataUrl = '';
+    Storage.setSettings(state.settings);
+    renderSettings();
+  });
+
+  $('#btnClosePreview').addEventListener('click', () => $('#previewOverlay').classList.remove('open'));
+  $('#previewOverlay').addEventListener('click', (e) => { if(e.target.id === 'previewOverlay') $('#previewOverlay').classList.remove('open'); });
+  $('#btnDownloadPdf').addEventListener('click', downloadPdfFromEditor);
+  $('#btnPrintPdf').addEventListener('click', printQuote);
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      closeConfigModal();
+      $('#previewOverlay').classList.remove('open');
+    }
+  });
+}
+
+/* -------------------------------------------------------------------------
+   20) EDITOR ACTIONS
+   ------------------------------------------------------------------------- */
+function startNewQuote(configId){
+  const q = buildBlankQuote(configId);
+  state.current = q;
+  state.quotes.unshift(q);
+  Storage.setQuotes(state.quotes);
+  closeConfigModal();
+  setView('editor');
+  toast(`New ${CONFIGURATIONS[configId].name} quotation`, 'success');
+}
+
+function saveDraftFromEditor(){
+  const q = state.current;
+  if(!q) return;
+  q.status = q.status === 'downloaded' ? 'downloaded' : 'draft';
+  saveQuote(q);
+  toast('Draft saved', 'success');
+}
+
+function clearForm(){
+  if(!state.current) return;
+  if(!confirm('Clear all fields on this quotation? This cannot be undone.')) return;
+  const fresh = buildBlankQuote(state.current.config);
+  fresh.id = state.current.id;
+  fresh.info.quotationNumber = state.current.info.quotationNumber;
+  state.current = fresh;
+  const idx = state.quotes.findIndex(x => x.id === fresh.id);
+  if(idx >= 0) state.quotes[idx] = fresh;
+  Storage.setQuotes(state.quotes);
+  renderEditor();
+  toast('Form reset');
+}
+
+function previewPdf(){
+  const q = state.current;
+  if(!q) return;
+  const errors = validateQuote(q);
+  if(errors.length){ showErrors(errors); toast('Please fix errors before previewing', 'error'); return; }
+  showErrors([]);
+  $('#previewBody').innerHTML = renderPreview(q);
+  $('#previewOverlay').classList.add('open');
+}
+
+function downloadPdfFromEditor(){
+  const q = state.current;
+  if(!q) return;
+  const errors = validateQuote(q);
+  if(errors.length){ showErrors(errors); toast('Please fix errors before downloading', 'error'); return; }
+  showErrors([]);
+  downloadQuotePdf(q, true);
+}
+
+function downloadQuotePdf(q, fromEditor=false){
+  if(!ensurePdfLibs()) return;
+  try{
+    const doc = buildPdf(q);
+    const filename = `${(q.info.quotationNumber || 'quotation').replace(/[^\w\-]+/g,'_')}_${CONFIGURATIONS[q.config].name}.pdf`;
+    doc.save(filename);
+
+    q.status = 'downloaded';
+    q.updatedAt = new Date().toISOString();
+    saveQuote(q);
+    if(fromEditor) renderEditor();
+    if(state.view === 'dashboard') renderDashboard();
+
+    toast('PDF downloaded', 'success');
+  }catch(err){
+    console.error(err);
+    toast('Failed to generate PDF: ' + err.message, 'error');
+  }
+}
+
+function printQuote(){
+  const q = state.current;
+  if(!q) return;
+  const html = renderPreview(q);
+  const win = window.open('', '_blank');
+  if(!win){ toast('Please allow pop-ups to print.', 'error'); return; }
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map(el => el.outerHTML).join('\n');
+  win.document.write(`<!doctype html><html><head><title>${esc(q.info.quotationNumber||'Quotation')}</title>
+    ${styles}
+    <style>body{background:#fff;padding:0;} .doc{box-shadow:none;margin:0 auto;}</style>
+    </head><body>${html}</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 400);
+}
+
+/* -------------------------------------------------------------------------
+   21) CONFIG MODAL
+   ------------------------------------------------------------------------- */
+function openConfigModal(){
+  const grid = $('#configGrid');
+  grid.innerHTML = Object.values(CONFIGURATIONS).map(c => {
+    const lim = FIXED_LOAD_LIMITS[c.id];
+    return `
+      <button class="config-card ${c.id}" data-config="${c.id}" type="button">
+        <div class="cc-icon">${c.icon}</div>
+        <h4>${esc(c.name)}</h4>
+        <p>${esc(c.description)}</p>
+        <div class="cc-limits">Min ${fmtW(lim.minLoadW)} • Max ${fmtW(lim.maxLoadW)}</div>
+      </button>
+    `;
+  }).join('');
+  $('#configOverlay').classList.add('open');
+  document.body.classList.add('no-scroll');
+}
+function closeConfigModal(){
+  $('#configOverlay').classList.remove('open');
+  document.body.classList.remove('no-scroll');
+}
+
+/* -------------------------------------------------------------------------
+   22) BOOT
+   ------------------------------------------------------------------------- */
+function boot(){
+  $('#brandName').textContent = state.settings.companyName || 'SolarQuote Pro';
+  const logoEl = $('#brandLogo');
+  if(state.settings.logoDataUrl){
+    logoEl.innerHTML = `<img src="${state.settings.logoDataUrl}" alt="logo" />`;
+  } else {
+    logoEl.textContent = (state.settings.companyName || 'S').charAt(0).toUpperCase();
+  }
+  bindEvents();
+  renderDashboard();
+  setView('dashboard');
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
